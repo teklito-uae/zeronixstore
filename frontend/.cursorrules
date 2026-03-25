@@ -1,0 +1,35 @@
+# Zeronix UAE Frontend UI Guidelines
+
+ALWAYS adhere to these guidelines to ensure the design remains premium, scalable, and consistent across the app:
+
+## 1. Core Shapes & Radii
+- All primary cards (Products, Feature blocks) MUST use `rounded-[16px]` on mobile and `rounded-[20px]` on desktop.
+- Inputs, Buttons, and Pill-Navs MUST use `rounded-full` (fully pill-shaped).
+- Avoid sharp corners unless specifically requested.
+
+## 2. Spacing & Compactness
+- NEVER make the mobile layout excessively tall.
+- Mobile Footers MUST use side-by-side grids (e.g., `grid-cols-2`) for link lists to reduce vertical scroll.
+- Maximum padding for mobile sections is `py-16`, desktop `md:py-32` or `lg:py-32`.
+- Product Card interior padding should be compact (`p-4 md:p-6`) to reduce total card height.
+
+## 3. Typography Hierarchy
+- **Section Headers:** `text-sm font-bold uppercase tracking-[0.2em] text-text-muted`
+- **Product Titles:** `text-sm md:text-base font-bold leading-tight line-clamp-2`
+- **Product Descriptions:** `text-[10px] md:text-xs text-text-muted line-clamp-2 leading-relaxed`
+- **Prices:** `text-base md:text-lg font-bold text-emerald-400 tracking-tight`
+- Avoid excessively large text on mobile. Use `text-[10px]` or `text-xs` for secondary information.
+- Primary buttons text size `text-[10px]` to `text-[11px] font-bold uppercase tracking-widest`.
+
+## 4. Aesthetic / Theme Colors
+- The primary brand color is `emerald-500` (Tech Green).
+- Backgrounds are deep grays/blacks (`bg-surface`, `bg-primary`, `bg-card`).
+- Gradients should lean toward `emerald-900` to `emerald-800` rather than plain green.
+- Active states / Hover states should use `hover:border-emerald-500` and `hover:text-emerald-400`.
+- Text values should primarily be `text-text-primary` for contrast, `text-text-muted` for secondary labels.
+
+## 5. Components
+- **Carousel (Mobile):** Render product carousels with exactly 2 slides `slidesPerView={2}` or `2.5` on breakpoints. Do not use 2.2 or 3 slides on phone screens.
+- **Product Card Image:** Limit image bounding box via `aspect-square p-4 md:p-6 object-contain`.
+product card radius
+Do not modify these core values unless explicitly requested by the user.
