@@ -3,9 +3,7 @@ import axios from 'axios';
 export const API_URL = import.meta.env.VITE_API_URL || `http://${window.location.hostname}:8000`;
 const apiBase = API_URL.endsWith('/api') ? API_URL : `${API_URL}/api`;
 
-export const STORAGE_URL = (API_URL.includes('localhost') || API_URL.includes('192.168.'))
-  ? `${API_URL}/storage`
-  : `${apiBase}/storage`;
+export const STORAGE_URL = `${API_URL}/storage`;
 
 export const api = axios.create({
   baseURL: apiBase,
