@@ -29,6 +29,10 @@
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
 
+# Documentation
+DEPLOYMENT_GUIDE.md
+POST_DEPLOYMENT_HANDOVER.md
+
 # OS Files
 Thumbs.db
 desktop.ini

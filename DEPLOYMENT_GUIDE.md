@@ -89,12 +89,16 @@ Create/Edit the `.htaccess` file in the root of `public_html` (NOT inside `sourc
     RewriteEngine On
     RewriteBase /
 
-    # 1. Route API and Health checks to the Laravel public folder
+    # 1. Route direct storage access to the backend storage folder
+    RewriteRule ^storage/(.*)$ source/backend/public/storage/$1 [L]
+
+    # 2. Route API and Health checks to the Laravel public folder
     RewriteRule ^(api|up)(/.*)?$ source/backend/public/index.php [L,QSA]
 
-    # 2. Route all other requests to the React dist folder (Frontend)
+    # 3. Route all other requests to the React dist folder (Frontend)
     RewriteCond %{REQUEST_URI} !^/api/
     RewriteCond %{REQUEST_URI} !^/up/
+    RewriteCond %{REQUEST_URI} !^/storage/
     RewriteCond %{REQUEST_URI} !^/source/
     RewriteRule ^(.*)$ source/frontend/dist/$1 [L]
 
@@ -107,6 +111,38 @@ Create/Edit the `.htaccess` file in the root of `public_html` (NOT inside `sourc
 ---
 
 ## 5. Verification Checklist
-- [ ] `https://zeronix.store` loads the React frontend.
-- [ ] `https://zeronix.store/api/up` (if health check exists) or a login POST responds with JSON.
-- [ ] Product images load (verifies `storage:link`).
+- [x] `https://zeronix.store` loads the React frontend.
+- [x] `https://zeronix.store/up` responds with JSON "OK".
+- [x] Product images load (verifies storage routing).
+
+---
+
+## 6. Ongoing Updates (Future Workflow)
+
+Once the initial setup is done, follow this simple process for new updates:
+
+### A. Frontend Changes
+1.  Modify your code.
+2.  **Run `npm run build`** in the `frontend` folder.
+3.  Commit and push to GitHub.
+4.  Deployment is automatic if you have "Auto-deploy" on, otherwise click **Deploy** in hPanel.
+
+### B. Backend Changes
+1.  Modify your code.
+2.  Commit and push to GitHub.
+3.  **If you added migrations**: Log in to Hostinger Terminal and run:
+    ```bash
+    cd ~/public_html/source/backend
+    php artisan migrate --force
+    ```
+4.  **If you added dependencies**:
+    ```bash
+    composer install --no-dev --optimize-autoloader
+    ```
+
+---
+
+## ⚠️ Important Notes
+- **Storage**: Do NOT run `php artisan storage:link` on Hostinger. The project is configured to bypass this requirement by writing directly to `public/storage`.
+- **API URL**: Always keep `VITE_API_URL=https://zeronix.store` (WITHOUT `/api`) in your local production `.env` to avoid double prefixes.
+- **Routing**: The `.htaccess` in `public_html` handles everything. You don't need to change it again unless you add new top-level folders.
