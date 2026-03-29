@@ -28,7 +28,8 @@ import {
 import { ProductCard } from '../components/product/ProductCard';
 import { ProductCardSkeleton } from '../components/ui/skeletons/ProductCardSkeleton';
 import { RecommendedProducts } from '../components/product/RecommendedProducts';
-import { api, STORAGE_URL } from '../lib/api';
+import { STORAGE_URL } from '../lib/api';
+import { useApiCache } from '../store/apiCache';
 
 const CATEGORIES = [
   { name: 'Tablet', slug: 'tablets', icon: Laptop, image: '' },
@@ -96,6 +97,8 @@ export default function Home() {
   const [casesLoading, setCasesLoading] = useState(false);
   const [coolingLoading, setCoolingLoading] = useState(false);
   const [psuLoading, setPsuLoading] = useState(false);
+  
+  const fetchWithCache = useApiCache(state => state.fetchWithCache);
 
   const { ref: dealsRef, inView: dealsInView } = useInView({ triggerOnce: true, threshold: 0.1 });
   const { ref: arrivalsRef, inView: arrivalsInView } = useInView({ triggerOnce: true, threshold: 0.1 });
@@ -107,7 +110,7 @@ export default function Home() {
   useEffect(() => {
     if (dealsInView && deals.length === 0) {
       setDealsLoading(true);
-      api.get('/products')
+      fetchWithCache('/products')
         .then(res => setDeals(res.data.data.slice(0, 8)))
         .catch(err => console.error("Failed to fetch deals:", err))
         .finally(() => setDealsLoading(false));
@@ -118,10 +121,10 @@ export default function Home() {
   useEffect(() => {
     if ((dealsInView || arrivalsInView) && newArrivals.length === 0) {
       setArrivalsLoading(true);
-      api.get('/products?page=2')
+      fetchWithCache('/products?page=2')
         .then(res => {
           if (!res.data.data || res.data.data.length === 0) {
-            return api.get('/products');
+            return fetchWithCache('/products');
           }
           return res;
         })
@@ -138,7 +141,7 @@ export default function Home() {
   useEffect(() => {
     if (casesInView && caseProducts.length === 0) {
       setCasesLoading(true);
-      api.get('/products?category=computer-cases')
+      fetchWithCache('/products?category=computer-cases')
         .then(res => setCaseProducts(res.data.data.slice(0, 8)))
         .catch(err => console.error("Failed to fetch cases:", err))
         .finally(() => setCasesLoading(false));
@@ -149,7 +152,7 @@ export default function Home() {
   useEffect(() => {
     if (coolingInView && coolingProducts.length === 0) {
       setCoolingLoading(true);
-      api.get('/products?category=cooling')
+      fetchWithCache('/products?category=cooling')
         .then(res => setCoolingProducts(res.data.data.slice(0, 8)))
         .catch(err => console.error("Failed to fetch cooling:", err))
         .finally(() => setCoolingLoading(false));
@@ -160,7 +163,7 @@ export default function Home() {
   useEffect(() => {
     if (psuInView && psuProducts.length === 0) {
       setPsuLoading(true);
-      api.get('/products?category=power-supplies')
+      fetchWithCache('/products?category=power-supplies')
         .then(res => setPsuProducts(res.data.data.slice(0, 8)))
         .catch(err => console.error("Failed to fetch PSUs:", err))
         .finally(() => setPsuLoading(false));

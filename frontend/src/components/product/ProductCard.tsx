@@ -60,6 +60,8 @@ export function ProductCard({
         <img
           src={image || "/placeholder-product.svg"}
           alt={name}
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-110"
         />
       </div>

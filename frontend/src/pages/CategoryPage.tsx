@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css';
-import { api } from '../lib/api';
 import { ProductCard } from '../components/product/ProductCard';
+import { useApiCache } from '../store/apiCache';
 import {
   Zap, SlidersHorizontal, ChevronRight, X,
   Laptop, Monitor, Cpu, MousePointer2, Printer, HardDrive,
@@ -59,10 +59,11 @@ export default function CategoryPage() {
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [sortBy, setSortBy] = useState('default');
   const [showSortMenu, setShowSortMenu] = useState(false);
+  const fetchWithCache = useApiCache((state) => state.fetchWithCache);
 
   // Fetch Full Categories Tree
   useEffect(() => {
-    api.get('/categories')
+    fetchWithCache('/categories')
        .then(({ data }) => setCategoriesTree(data))
        .catch(console.error);
   }, []);
@@ -107,11 +108,11 @@ export default function CategoryPage() {
   // Fetch brands & price range for this category
   useEffect(() => {
     if (!slug) return;
-    api.get(`/products/brands?category=${slug}`)
+    fetchWithCache(`/products/brands?category=${slug}`)
        .then(({ data }) => setAvailableBrands(data))
        .catch(console.error);
 
-    api.get(`/products/price-range?category=${slug}`)
+    fetchWithCache(`/products/price-range?category=${slug}`)
        .then(({ data }) => {
          setPriceRange(data);
          if (isFirstLoad) {
@@ -149,7 +150,7 @@ export default function CategoryPage() {
       if (selectedPrice[0] > priceRange.min) url += `&price_min=${selectedPrice[0]}`;
       if (selectedPrice[1] < priceRange.max) url += `&price_max=${selectedPrice[1]}`;
 
-      api.get(url)
+      fetchWithCache(url)
          .then(({ data }) => {
            setProducts(data.data);
            setCurrentPage(data.current_page);

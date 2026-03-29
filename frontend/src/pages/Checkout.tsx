@@ -7,8 +7,6 @@ import {
 import { useCartStore } from '../store/cart';
 import { useAuthStore } from '../store/auth';
 import { api } from '../lib/api';
-import Lottie from 'lottie-react';
-import successAnimation from '../assets/animations/success-check.json';
 
 // ─── Types ──────────────────────────────────────────────────────
 type ShippingMethod = 'standard' | 'express';
@@ -221,8 +219,15 @@ export default function Checkout() {
     return (
       <div className="py-12 md:py-20 px-4 max-w-4xl mx-auto min-h-screen">
         <div className="flex flex-col items-center text-center mb-10 animate-in fade-in slide-in-from-bottom-8 duration-700">
-          <div className="w-40 h-40 md:w-52 md:h-52 mb-2 flex items-center justify-center">
-            <Lottie animationData={successAnimation} loop={false} autoplay className="w-full h-full" />
+          <div className="w-40 h-40 md:w-52 md:h-52 mb-6 flex items-center justify-center relative">
+            {/* Background glow pulse */}
+            <div className="absolute inset-0 bg-emerald-500/10 rounded-full animate-ping duration-[3000ms] scale-75" />
+            <div className="absolute inset-4 bg-emerald-500/20 rounded-full animate-pulse" />
+            
+            {/* Success icon with pop-in animation */}
+            <div className="relative bg-emerald-500 rounded-full p-8 md:p-12 shadow-[0_20px_50px_rgba(16,185,129,0.3)] animate-in zoom-in-50 duration-500 curve-bounce">
+              <CheckCircle2 className="w-16 h-16 md:w-24 md:h-24 text-white stroke-[3px]" />
+            </div>
           </div>
           <h1 className="text-2xl md:text-4xl font-black tracking-tight mb-3 text-text-primary">Order Confirmed!</h1>
           <p className="text-text-muted text-xs md:text-sm uppercase tracking-[0.2em] font-bold opacity-60 mb-1">

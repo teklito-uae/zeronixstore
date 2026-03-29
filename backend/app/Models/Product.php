@@ -13,6 +13,8 @@ class Product extends Model
         'source_url', 'is_imported', 'import_metadata',
         'badge', 'badge_color'
     ];
+    
+    protected $hidden = ['source_url', 'import_metadata'];
 
     protected $appends = ['images_gallery_urls', 'primary_image_url'];
 
@@ -58,25 +60,32 @@ class Product extends Model
         if ($this->imagesGallery->isNotEmpty()) {
             return $this->imagesGallery->map(function($img) {
                 $path = $img->path;
-                if (str_starts_with($path, 'http')) return $path;
+                if (str_starts_with($path, 'http')) {
+                    // Only return external URLs if they are not from Microless
+                    if (str_contains($path, 'microless.com')) return null;
+                    return $path;
+                }
                 $path = ltrim($path, '/');
                 if (str_starts_with($path, 'storage/')) {
                     return url($path);
                 }
                 return url('storage/' . $path);
-            });
+            })->filter()->values();
         }
 
         // Fallback to legacy images column
         if ($this->images && is_array($this->images)) {
             return collect($this->images)->map(function($path) {
-                if (str_starts_with($path, 'http')) return $path;
+                if (str_starts_with($path, 'http')) {
+                    if (str_contains($path, 'microless.com')) return null;
+                    return $path;
+                }
                 $path = ltrim($path, '/');
                 if (str_starts_with($path, 'storage/')) {
                     return url($path);
                 }
                 return url('storage/' . $path);
-            })->values();
+            })->filter()->values();
         }
 
         return [];
@@ -87,7 +96,10 @@ class Product extends Model
         $primary = $this->imagesGallery()->where('is_primary', true)->first() ?? $this->imagesGallery()->first();
         if ($primary && isset($primary->path)) {
             $path = $primary->path;
-            if (str_starts_with($path, 'http')) return $path;
+            if (str_starts_with($path, 'http')) {
+                if (str_contains($path, 'microless.com')) return null;
+                return $path;
+            }
             $path = ltrim($path, '/');
             if (str_starts_with($path, 'storage/')) {
                 return url($path);
@@ -98,7 +110,10 @@ class Product extends Model
         // Fallback to legacy images column
         if ($this->images && is_array($this->images) && count($this->images) > 0) {
             $path = $this->images[0];
-            if (str_starts_with($path, 'http')) return $path;
+            if (str_starts_with($path, 'http')) {
+                if (str_contains($path, 'microless.com')) return null;
+                return $path;
+            }
             $path = ltrim($path, '/');
             if (str_starts_with($path, 'storage/')) {
                 return url($path);

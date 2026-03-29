@@ -7,6 +7,7 @@ use App\Models\Brand;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Cache;
 
 class ProductController extends Controller
 {
@@ -23,39 +24,47 @@ class ProductController extends Controller
 
     public function index(Request $request)
     {
-        $query = Product::with(['category', 'variants', 'brand']);
-
-        if ($request->has('category')) {
-            $category = Category::where('slug', $request->category)->first();
-            if ($category) {
-                $allIds = array_merge([$category->id], $this->getAllDescendantIds($category->id));
-                $query->whereIn('category_id', $allIds);
-            } else {
-                $query->whereHas('category', fn($q) => $q->where('slug', $request->category));
-            }
-        }
-
-        if ($request->has('brand')) {
-            $brandSlugs = explode(',', $request->brand);
-            $query->whereHas('brand', function($q) use ($brandSlugs) {
-                $q->whereIn('slug', $brandSlugs);
-            });
-        }
-        
-        if ($request->has('price_min')) {
-            $query->where('price', '>=', $request->price_min);
-        }
-
-        if ($request->has('price_max')) {
-            $query->where('price', '<=', $request->price_max);
-        }
-        
-        if ($request->has('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%');
-        }
-
         $perPage = min((int) $request->query('per_page', 24), 100);
-        return response()->json($query->paginate($perPage));
+        $version = Cache::get('products_cache_version', 0);
+        
+        $cacheKey = 'products_page_' . md5(json_encode($request->all())) . '_v' . $version;
+
+        $products = Cache::remember($cacheKey, 60, function () use ($request, $perPage) {
+            $query = Product::with(['category', 'variants', 'brand']);
+
+            if ($request->has('category')) {
+                $category = Category::where('slug', $request->category)->first();
+                if ($category) {
+                    $allIds = array_merge([$category->id], $this->getAllDescendantIds($category->id));
+                    $query->whereIn('category_id', $allIds);
+                } else {
+                    $query->whereHas('category', fn($q) => $q->where('slug', $request->category));
+                }
+            }
+
+            if ($request->has('brand')) {
+                $brandSlugs = explode(',', $request->brand);
+                $query->whereHas('brand', function($q) use ($brandSlugs) {
+                    $q->whereIn('slug', $brandSlugs);
+                });
+            }
+            
+            if ($request->has('price_min')) {
+                $query->where('price', '>=', $request->price_min);
+            }
+
+            if ($request->has('price_max')) {
+                $query->where('price', '<=', $request->price_max);
+            }
+            
+            if ($request->has('search')) {
+                $query->where('name', 'like', '%' . $request->search . '%');
+            }
+
+            return $query->paginate($perPage);
+        });
+
+        return response()->json($products)->header('Cache-Control', 'public, max-age=60');
     }
 
     /**
@@ -63,26 +72,30 @@ class ProductController extends Controller
      */
     public function brandsForCategory(Request $request)
     {
-        $categorySlug = $request->query('category');
+        $categorySlug = $request->query('category', 'all');
+        $version = Cache::get('products_cache_version', 0);
+        $cacheKey = 'brands_for_' . $categorySlug . '_v' . $version;
         
-        if (!$categorySlug) {
-            return response()->json(Brand::orderBy('name')->get());
-        }
+        $brands = Cache::remember($cacheKey, 300, function () use ($request, $categorySlug) {
+            if ($categorySlug === 'all') {
+                return Brand::orderBy('name')->get();
+            }
 
-        $category = Category::where('slug', $categorySlug)->first();
-        if (!$category) return response()->json([]);
+            $category = Category::where('slug', $categorySlug)->first();
+            if (!$category) return collect([]);
 
-        $allCategoryIds = array_merge([$category->id], $this->getAllDescendantIds($category->id));
+            $allCategoryIds = array_merge([$category->id], $this->getAllDescendantIds($category->id));
 
-        // Refined: Strictly get brands that have at least one product in these specific categories
-        $brands = Brand::whereHas('products', function ($q) use ($allCategoryIds) {
-            $q->whereIn('category_id', $allCategoryIds);
-        })
-        ->select('id', 'name', 'slug')
-        ->orderBy('name')
-        ->get();
+            // Refined: Strictly get brands that have at least one product in these specific categories
+            return Brand::whereHas('products', function ($q) use ($allCategoryIds) {
+                $q->whereIn('category_id', $allCategoryIds);
+            })
+            ->select('id', 'name', 'slug')
+            ->orderBy('name')
+            ->get();
+        });
 
-        return response()->json($brands);
+        return response()->json($brands)->header('Cache-Control', 'public, max-age=300');
     }
 
     /**
@@ -154,8 +167,12 @@ class ProductController extends Controller
 
     public function show($slug)
     {
-        $product = Product::with(['category', 'variants', 'imagesGallery', 'brand'])->where('slug', $slug)->firstOrFail();
-        return response()->json($product);
+        $cacheKey = 'pr_d_' . md5($slug);
+        $product = Cache::remember($cacheKey, 300, function () use ($slug) {
+            return Product::with(['category', 'variants', 'imagesGallery', 'brand'])->where('slug', $slug)->firstOrFail();
+        });
+
+        return response()->json($product)->header('Cache-Control', 'public, max-age=300');
     }
 
     // Admin methods

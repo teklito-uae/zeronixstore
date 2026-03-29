@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Check, ShieldCheck, Truck, ChevronLeft, Heart, Share2 } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
-import { api } from '../lib/api';
 import { useCartStore } from '../store/cart';
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { toast } from 'sonner';
 import { ProductCard } from '../components/product/ProductCard';
 import { ProductDetailSkeleton } from '../components/ui/skeletons/ProductDetailSkeleton';
+import { useApiCache } from '../store/apiCache';
+import { toast } from 'sonner';
+
 interface ProductDetail {
   id: number;
   name: string;
@@ -35,6 +36,7 @@ export default function ProductDetail() {
   const [isDescExpanded, setIsDescExpanded] = useState(false);
   const [relatedProducts, setRelatedProducts] = useState<any[]>([]);
   const addItem = useCartStore((state) => state.addItem);
+  const fetchWithCache = useApiCache((state) => state.fetchWithCache);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -43,12 +45,12 @@ export default function ProductDetail() {
     const fetchProductAndRelated = async () => {
       try {
         setIsLoading(true);
-        const { data } = await api.get(`/products/${slug}`);
+        const { data } = await fetchWithCache(`/products/${slug}`);
         setProduct(data);
         
         // Fetch related products from same category
         if (data?.category?.slug) {
-           const relatedData = await api.get(`/products?category=${data.category.slug}`);
+           const relatedData = await fetchWithCache(`/products?category=${data.category.slug}`);
            // Filter out the current product from the related list
            const filteredRelated = relatedData.data.data.filter((p: any) => p.id !== data.id);
            setRelatedProducts(filteredRelated);

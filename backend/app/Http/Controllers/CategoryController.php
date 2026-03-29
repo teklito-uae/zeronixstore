@@ -6,12 +6,17 @@ use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
     public function index()
     {
-        return response()->json(Category::with('children.children')->whereNull('parent_id')->get());
+        $categories = Cache::remember('all_categories_tree', 86400, function () {
+            return Category::with('children.children')->whereNull('parent_id')->get();
+        });
+        
+        return response()->json($categories)->header('Cache-Control', 'public, max-age=86400');
     }
 
     public function store(Request $request)

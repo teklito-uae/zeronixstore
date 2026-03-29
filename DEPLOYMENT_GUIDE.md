@@ -4,7 +4,25 @@ This document provides a comprehensive step-by-step guide to deploying the Zeron
 
 ---
 
-## 1. Local Preparation
+## 1. Local Development
+To run the project locally, open two separate terminals:
+
+- **Terminal 1 (Frontend)**: 
+    ```bash
+    cd frontend
+    npm run dev
+    ```
+- **Terminal 2 (Backend)**: 
+    ```bash
+    cd backend
+    php artisan serve --host=0.0.0.0
+    ```
+
+*(Note: The system automatically detects your local IP, so APIs will work on any device in your network without manual editing.)*
+
+---
+
+## 2. Production Preparation
 Before pushing to GitHub, ensure your local environment is ready:
 
 1.  **Frontend Build**:
@@ -49,9 +67,7 @@ APP_ENV=production
 APP_KEY=base64:YOUR_GENERATED_KEY
 APP_DEBUG=false
 APP_URL=https://zeronix.store/api
-
-# IMPORTANT: Your Frontend .env (on your local machine) should use:
-# VITE_API_URL=https://zeronix.store
+ALLOWED_ORIGINS=https://zeronix.store
 
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -61,7 +77,7 @@ DB_USERNAME=your_db_user
 DB_PASSWORD=your_db_password
 ```
 
-### B. SSH/Terminal Commands
+### B. SSH/Terminal Commands (Migration & Updates)
 In the Hostinger **Browser Terminal** or **SSH**, run these commands:
 
 ```bash
