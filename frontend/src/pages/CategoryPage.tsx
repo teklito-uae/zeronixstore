@@ -16,6 +16,7 @@ import {
 } from "../components/ui/sheet";
 import { Button } from '../components/ui/button';
 import { ProductCardSkeleton } from '../components/ui/skeletons/ProductCardSkeleton';
+import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 
 const getCategoryIcon = (name: string) => {
   const n = name.toLowerCase();
@@ -52,12 +53,16 @@ export default function CategoryPage() {
 
   // Filters State
   const [showFilters, setShowFilters] = useState(false);
+  const [showBrandSheet, setShowBrandSheet] = useState(false);
+  const [showPriceSheet, setShowPriceSheet] = useState(false);
   const [availableBrands, setAvailableBrands] = useState<any[]>([]);
   const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState({ min: 0, max: 10000 });
   const [selectedPrice, setSelectedPrice] = useState<[number, number]>([0, 10000]);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
   const [sortBy, setSortBy] = useState('default');
+  const [filterInStock, setFilterInStock] = useState(false);
+  const [filterOnSale, setFilterOnSale] = useState(false);
   const [showSortMenu, setShowSortMenu] = useState(false);
   const fetchWithCache = useApiCache((state) => state.fetchWithCache);
 
@@ -315,9 +320,9 @@ export default function CategoryPage() {
   return (
     <div className="min-h-screen bg-bg-primary pb-20 lg:pb-10 relative">
 
-      {/* ─── Mobile: Subcategory Chips + Info ─── */}
-      <div className="lg:hidden sticky top-0 z-40 bg-bg-primary">
-        {/* Subcategory horizontal scroller (no gap from navbar) */}
+      {/* ─── Mobile: Subcategory Chips + Filter Chips + Info ─── */}
+      <div className="lg:hidden sticky top-[53px] z-40 bg-bg-primary">
+        {/* Subcategory horizontal scroller */}
         {swiperItems.length > 0 && (
           <div className="border-b border-border-subtle/50 px-3 py-2.5 relative">
             <div className="flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
@@ -337,6 +342,68 @@ export default function CategoryPage() {
             </div>
           </div>
         )}
+
+        {/* Mobile Filter Chips Row */}
+        <div className="border-b border-border-subtle/30 px-3 py-2">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+            <button
+              onClick={() => { resetFilters(); setFilterInStock(false); setFilterOnSale(false); }}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${
+                !hasActiveFilters && !filterInStock && !filterOnSale
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-bg-surface border border-border-subtle text-text-muted'
+              }`}
+            >
+              All
+            </button>
+            <button
+              onClick={() => setShowBrandSheet(true)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all flex items-center gap-1 ${
+                selectedBrands.length > 0
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-bg-surface border border-border-subtle text-text-muted'
+              }`}
+            >
+              Brand {selectedBrands.length > 0 && `(${selectedBrands.length})`} <ChevronDown className="h-3 w-3" />
+            </button>
+            <button
+              onClick={() => setShowPriceSheet(true)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all flex items-center gap-1 ${
+                selectedPrice[0] > priceRange.min || selectedPrice[1] < priceRange.max
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-bg-surface border border-border-subtle text-text-muted'
+              }`}
+            >
+              Price <ChevronDown className="h-3 w-3" />
+            </button>
+            <button
+              onClick={() => setFilterInStock(!filterInStock)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${
+                filterInStock
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-bg-surface border border-border-subtle text-text-muted'
+              }`}
+            >
+              In Stock
+            </button>
+            <button
+              onClick={() => setFilterOnSale(!filterOnSale)}
+              className={`px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap transition-all ${
+                filterOnSale
+                  ? 'bg-emerald-500 text-white'
+                  : 'bg-bg-surface border border-border-subtle text-text-muted'
+              }`}
+            >
+              On Sale
+            </button>
+            <button
+              onClick={() => setShowFilters(true)}
+              className="px-3 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap bg-bg-surface border border-border-subtle text-text-muted flex items-center gap-1"
+            >
+              <SlidersHorizontal className="h-3 w-3" /> More
+            </button>
+          </div>
+        </div>
 
         {/* Result count + sort */}
         <div className="flex items-center justify-between px-4 py-2 border-b border-border-subtle/30">
@@ -367,29 +434,18 @@ export default function CategoryPage() {
 
       {/* ─── Desktop: Breadcrumbs + Subcategory Cards ─── */}
       <div className="hidden lg:block bg-bg-primary border-b border-border-subtle/50">
-        <div className="max-w-[1440px] mx-auto px-6 py-4">
+        <div className="max-w-[1440px] mx-auto px-6 py-2">
           <div className="flex items-center justify-between">
-            <nav className="flex items-center gap-1.5">
-              <Link to="/" className="text-[11px] font-bold text-text-muted hover:text-emerald-500 transition-colors uppercase tracking-widest">Home</Link>
-              <ChevronRight className="h-3 w-3 text-text-muted/40" />
-              {categoryPath.map((cat, idx) => {
-                const isLast = idx === categoryPath.length - 1 && !searchQuery;
-                return (
-                  <div key={cat.id} className="flex items-center gap-1.5">
-                    <Link to={`/category/${cat.slug}`}
-                      className={`text-[11px] font-bold tracking-widest transition-colors uppercase ${isLast ? 'text-text-primary' : 'text-text-muted hover:text-emerald-500'}`}>
-                      {cat.name}
-                    </Link>
-                    {(!isLast || searchQuery) && <ChevronRight className="h-3 w-3 text-text-muted/50" />}
-                  </div>
-                );
-              })}
-              {searchQuery && (
-                <span className="text-[11px] font-bold tracking-widest transition-colors uppercase text-text-primary">
-                  Search: "{searchQuery}"
-                </span>
-              )}
-            </nav>
+            <Breadcrumbs
+              items={[
+                { label: 'Home', href: '/' },
+                ...categoryPath.map((cat: any, idx: number) => ({
+                  label: cat.name,
+                  href: idx < categoryPath.length - 1 || searchQuery ? `/category/${cat.slug}` : undefined,
+                })),
+                ...(searchQuery ? [{ label: `Search: "${searchQuery}"` }] : []),
+              ]}
+            />
             <span className="text-xs font-bold text-text-muted"><span className="text-text-primary">{totalProducts}</span> products</span>
           </div>
         </div>
@@ -549,17 +605,89 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {/* ─── Mobile Filter Sheet (no floating button — triggered from header filter chip) ─── */}
+      {/* ─── Mobile Filter Sheet — Full filters (bottom) ─── */}
       <Sheet open={showFilters} onOpenChange={setShowFilters}>
-        <SheetContent side="left" className="w-[85vw] sm:w-[380px] h-full border-r-0 p-0 bg-bg-surface overflow-hidden z-[100]">
+        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl border-t p-0 bg-bg-surface overflow-hidden z-[100]">
           <SheetHeader className="px-5 pt-5 pb-3 border-b border-border-subtle">
             <SheetTitle className="text-sm font-black flex items-center gap-2 tracking-tight">
               <SlidersHorizontal className="h-3.5 w-3.5 text-emerald-500" />
-              Filters
+              All Filters
             </SheetTitle>
           </SheetHeader>
-          <div className="p-5 overflow-y-auto h-[calc(100vh-64px)] no-scrollbar">
+          <div className="p-5 overflow-y-auto h-[calc(85vh-64px)] no-scrollbar">
             <FilterContent isMobile={true} />
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* ─── Mobile Brand Sheet (bottom) ─── */}
+      <Sheet open={showBrandSheet} onOpenChange={setShowBrandSheet}>
+        <SheetContent side="bottom" className="h-[60vh] rounded-t-2xl border-t p-0 bg-bg-surface overflow-hidden z-[100]">
+          <SheetHeader className="px-5 pt-5 pb-3 border-b border-border-subtle">
+            <SheetTitle className="text-sm font-black tracking-tight">Filter by Brand</SheetTitle>
+          </SheetHeader>
+          <div className="p-5 overflow-y-auto h-[calc(60vh-120px)] no-scrollbar">
+            {availableBrands.length > 0 ? (
+              <div className="space-y-0.5">
+                {availableBrands.map((brand: any) => {
+                  const isChecked = selectedBrands.includes(brand.slug);
+                  return (
+                    <label key={brand.id} className="flex items-center gap-3 p-2.5 rounded-lg cursor-pointer hover:bg-bg-primary transition-colors">
+                      <input type="checkbox" checked={isChecked} onChange={() => toggleBrand(brand.slug)}
+                        className="w-4 h-4 rounded border-border-subtle text-emerald-500 focus:ring-emerald-500/20" />
+                      <span className={`text-sm transition-colors ${isChecked ? 'text-emerald-500 font-bold' : 'text-text-primary'}`}>
+                        {brand.name}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-xs text-text-muted">No brands found</p>
+            )}
+          </div>
+          <div className="px-5 py-3 border-t border-border-subtle">
+            <Button size="sm" className="w-full text-xs font-bold rounded-xl h-11 bg-emerald-500 hover:bg-emerald-600 text-white"
+              onClick={() => setShowBrandSheet(false)}>Apply</Button>
+          </div>
+        </SheetContent>
+      </Sheet>
+
+      {/* ─── Mobile Price Sheet (bottom) ─── */}
+      <Sheet open={showPriceSheet} onOpenChange={setShowPriceSheet}>
+        <SheetContent side="bottom" className="h-[50vh] rounded-t-2xl border-t p-0 bg-bg-surface overflow-hidden z-[100]">
+          <SheetHeader className="px-5 pt-5 pb-3 border-b border-border-subtle">
+            <SheetTitle className="text-sm font-black tracking-tight">Filter by Price</SheetTitle>
+          </SheetHeader>
+          <div className="p-5">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs font-bold text-text-muted">Price Range</span>
+              <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
+                AED {Math.round(selectedPrice[0])} - {Math.round(selectedPrice[1])}
+              </span>
+            </div>
+            <div className="px-1">
+              <Slider
+                min={priceRange.min} max={priceRange.max} step={1}
+                value={[selectedPrice[0], selectedPrice[1]]}
+                onValueChange={handlePriceChange}
+                className="mb-6"
+              />
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                <div className="bg-bg-primary border border-border-subtle rounded-xl p-3">
+                  <span className="text-[9px] text-text-muted block uppercase font-bold tracking-widest opacity-50">From</span>
+                  <span className="text-sm font-bold text-text-primary">AED {Math.round(selectedPrice[0])}</span>
+                </div>
+                <div className="bg-bg-primary border border-border-subtle rounded-xl p-3">
+                  <span className="text-[9px] text-text-muted block uppercase font-bold tracking-widest opacity-50">To</span>
+                  <span className="text-sm font-bold text-text-primary">AED {Math.round(selectedPrice[1])}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="px-5 py-3 border-t border-border-subtle">
+            <Button size="sm" className="w-full text-xs font-bold rounded-xl h-11 bg-emerald-500 hover:bg-emerald-600 text-white"
+              onClick={() => setShowPriceSheet(false)}>Apply</Button>
           </div>
         </SheetContent>
       </Sheet>

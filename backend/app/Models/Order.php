@@ -8,7 +8,8 @@ class Order extends Model
 {
     protected $fillable = [
         'user_id', 'order_number', 'status', 'subtotal', 'tax', 'total',
-        'shipping_address', 'payment_method', 'payment_status', 'notes'
+        'shipping_address', 'payment_method', 'payment_status', 'notes',
+        'email', 'phone'
     ];
 
     protected static function booted()

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { ShoppingCart, Check, ShieldCheck, Truck, ChevronLeft, Heart, Share2 } from 'lucide-react';
+import { ShoppingCart, Check, ShieldCheck, Truck, Heart, Package } from 'lucide-react';
 import { Helmet } from 'react-helmet-async';
 import { useCartStore } from '../store/cart';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -8,6 +8,7 @@ import { ProductCard } from '../components/product/ProductCard';
 import { ProductDetailSkeleton } from '../components/ui/skeletons/ProductDetailSkeleton';
 import { useApiCache } from '../store/apiCache';
 import { toast } from 'sonner';
+import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 
 interface ProductDetail {
   id: number;
@@ -130,35 +131,15 @@ export default function ProductDetail() {
         </script>
       </Helmet>
       <div className="py-8 px-4 md:px-6 max-w-[1440px] mx-auto min-h-screen relative">
-        {/* Mobile Header (Refined Wireframe Style - Fixed to Top) */}
-        <div className="md:hidden fixed top-0 left-0 right-0 z-[100] bg-bg-primary border-b border-border-subtle/50 shadow-sm flex items-center justify-between px-6 py-4 transition-all duration-300">
-           <button 
-             onClick={() => navigate(-1)} 
-             className="w-10 h-10 flex items-center justify-center bg-bg-surface border border-border-subtle rounded-full text-text-primary hover:bg-bg-primary transition-all active:scale-95"
-           >
-             <ChevronLeft className="w-5 h-5" />
-           </button>
-           
-           <h1 className="text-sm font-bold tracking-tight text-text-primary truncate max-w-[180px]">{product?.name || 'Product Detail'}</h1>
-           
-           <button className="w-10 h-10 flex items-center justify-center bg-bg-surface border border-border-subtle rounded-full text-text-primary hover:bg-bg-primary transition-all active:scale-95">
-             <Share2 className="w-4 h-4" />
-           </button>
-        </div>
-
-        {/* Spacer for Mobile Fixed Header */}
-        <div className="h-16 md:hidden" />
-
-        {/* Breadcrumb (Hidden on Mobile) */}
-        <nav className="hidden md:flex text-[10px] md:text-xs font-bold uppercase tracking-widest text-text-muted mb-8">
-          <ol className="flex items-center space-x-2">
-            <li><Link to="/" className="hover:text-emerald-500 transition-colors">Home</Link></li>
-            <li><span>/</span></li>
-            <li><Link to={`/category/${product.category.slug}`} className="hover:text-emerald-500 transition-colors">{product.category.name}</Link></li>
-            <li><span>/</span></li>
-            <li className="text-text-primary truncate max-w-[150px] md:max-w-xs">{product.name}</li>
-          </ol>
-        </nav>
+        {/* Breadcrumbs — visible on all viewports */}
+        <Breadcrumbs
+          className="mb-4 md:mb-8 px-0"
+          items={[
+            { label: 'Home', href: '/' },
+            { label: product.category.name, href: `/category/${product.category.slug}` },
+            { label: product.name },
+          ]}
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12">
           {/* Images Gallery */}
@@ -310,6 +291,24 @@ export default function ProductDetail() {
               </div>
             </div>
 
+            {/* ─── Trust Strip ─── */}
+            <div className="hidden md:flex items-center justify-between gap-4 mt-4 p-4 rounded-xl bg-bg-surface border border-border-subtle">
+              <div className="flex items-center gap-2 text-[11px] text-text-muted font-medium">
+                <ShieldCheck className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>Official Warranty</span>
+              </div>
+              <div className="h-4 w-px bg-border-subtle" />
+              <div className="flex items-center gap-2 text-[11px] text-text-muted font-medium">
+                <Package className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>Sealed Box</span>
+              </div>
+              <div className="h-4 w-px bg-border-subtle" />
+              <div className="flex items-center gap-2 text-[11px] text-text-muted font-medium">
+                <Truck className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>Fast UAE Delivery</span>
+              </div>
+            </div>
+
             {/* Mobile Selection Placeholders (Wireframe "Type" section) */}
             <div className="md:hidden space-y-4 mb-6 mt-1">
                {product.variants && product.variants.length > 0 && (
@@ -367,21 +366,41 @@ export default function ProductDetail() {
            </button>
         </div>
 
-        {/* Sticky Mobile Actions (Wireframe Style) */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 p-4 bg-bg-primary/95 backdrop-blur-xl border-t border-border-subtle/50 z-[110] flex gap-3" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 16px), 16px)' }}>
-           <button 
-             onClick={handleAddToCart}
-             className="flex-1 h-14 bg-bg-surface border-2 border-emerald-500 text-emerald-500 font-bold uppercase tracking-widest text-[11px] rounded-2xl hover:bg-emerald-50/10 transition-all flex items-center justify-center gap-2"
-           >
-             <ShoppingCart className="w-4 h-4" />
-             Add to Cart
-           </button>
-           <button 
-             onClick={() => { handleAddToCart(); navigate('/checkout'); }}
-             className="flex-1 h-14 bg-emerald-500 text-white font-bold uppercase tracking-widest text-[11px] rounded-2xl hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center"
-           >
-             Buy Now
-           </button>
+        {/* Sticky Mobile Actions + Trust Strip */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-bg-primary/95 backdrop-blur-xl border-t border-border-subtle/50 z-[110]" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 8px), 8px)' }}>
+           {/* Trust strip */}
+           <div className="flex items-center justify-center gap-4 px-4 py-2 border-b border-border-subtle/30">
+             <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
+               <ShieldCheck className="w-3 h-3 text-emerald-500" />
+               <span>Official Warranty</span>
+             </div>
+             <div className="h-3 w-px bg-border-subtle" />
+             <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
+               <Package className="w-3 h-3 text-emerald-500" />
+               <span>Sealed Box</span>
+             </div>
+             <div className="h-3 w-px bg-border-subtle" />
+             <div className="flex items-center gap-1.5 text-[10px] text-text-muted">
+               <Truck className="w-3 h-3 text-emerald-500" />
+               <span>Fast UAE Delivery</span>
+             </div>
+           </div>
+           {/* Action buttons */}
+           <div className="flex gap-3 p-4 pt-2">
+             <button 
+               onClick={handleAddToCart}
+               className="flex-1 h-14 bg-bg-surface border-2 border-emerald-500 text-emerald-500 font-bold uppercase tracking-widest text-[11px] rounded-2xl hover:bg-emerald-50/10 transition-all flex items-center justify-center gap-2"
+             >
+               <ShoppingCart className="w-4 h-4" />
+               Add to Cart
+             </button>
+             <button 
+               onClick={() => { handleAddToCart(); navigate('/checkout'); }}
+               className="flex-1 h-14 bg-emerald-500 text-white font-bold uppercase tracking-widest text-[11px] rounded-2xl hover:bg-emerald-600 transition-all shadow-lg shadow-emerald-500/25 flex items-center justify-center"
+             >
+               Buy Now
+             </button>
+           </div>
         </div>
 
         {/* Related Products Carousel */}

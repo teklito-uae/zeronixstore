@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Trash2, ShoppingBag, ArrowRight, Minus, Plus, Package } from 'lucide-react';
 import { useCartStore } from '../store/cart';
+import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, getSummary } = useCartStore();
@@ -30,8 +31,9 @@ export default function Cart() {
     <div className="min-h-screen bg-bg-primary">
       {/* ── Mobile Layout: stacked items + sticky footer ── */}
       <div className="lg:hidden">
-        {/* Header */}
-        <div className="px-4 pt-5 pb-3 border-b border-border-subtle">
+        {/* Breadcrumbs + Header */}
+        <div className="px-4 pt-2 pb-3 border-b border-border-subtle">
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
           <h1 className="text-xl font-black text-text-primary tracking-tight">Cart</h1>
           <p className="text-xs text-text-muted mt-0.5">{items.length} item{items.length !== 1 ? 's' : ''}</p>
         </div>
@@ -85,8 +87,8 @@ export default function Cart() {
           ))}
         </div>
 
-        {/* Sticky Footer Summary */}
-        <div className="fixed bottom-0 left-0 right-0 z-40 bg-bg-surface border-t border-border-subtle px-4 pt-3 pb-5 shadow-[0_-4px_24px_rgba(0,0,0,0.1)]" style={{ paddingBottom: 'max(env(safe-area-inset-bottom, 20px), 20px)' }}>
+        {/* Sticky Footer Summary — sits above bottom nav */}
+        <div className="fixed bottom-[72px] left-0 right-0 z-40 bg-bg-surface border-t border-border-subtle px-4 pt-3 pb-4 shadow-[0_-4px_24px_rgba(0,0,0,0.1)]">
           <div className="space-y-1.5 mb-3">
             <div className="flex justify-between text-xs text-text-muted">
               <span>Subtotal</span>
@@ -116,7 +118,8 @@ export default function Cart() {
       </div>
 
       {/* ── Desktop Layout ── */}
-      <div className="hidden lg:block max-w-[1440px] mx-auto px-6 lg:px-8 py-12">
+      <div className="hidden lg:block max-w-[1440px] mx-auto px-6 lg:px-8 py-8">
+        <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} className="mb-4" />
         <h1 className="text-2xl font-black text-text-primary tracking-tight mb-8">
           Shopping Cart <span className="text-text-muted font-bold text-base ml-2">({items.length} items)</span>
         </h1>

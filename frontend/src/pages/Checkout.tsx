@@ -7,6 +7,7 @@ import {
 import { useCartStore } from '../store/cart';
 import { useAuthStore } from '../store/auth';
 import { api } from '../lib/api';
+import { Breadcrumbs } from '../components/layout/Breadcrumbs';
 
 // ─── Types ──────────────────────────────────────────────────────
 type ShippingMethod = 'standard' | 'express';
@@ -319,6 +320,9 @@ export default function Checkout() {
       </div>
 
       <div className="max-w-[1440px] mx-auto px-4 lg:px-8 py-6 lg:py-10">
+        <div className="hidden lg:block mb-2">
+          <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cart', href: '/cart' }, { label: 'Checkout' }]} />
+        </div>
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
 
           {/* ── Left: Form Steps ── */}

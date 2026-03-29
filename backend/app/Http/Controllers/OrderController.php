@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
+use App\Events\OrderPlaced;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -30,9 +31,33 @@ class OrderController extends Controller
             'items.*.quantity' => 'required|integer|min:1',
             'shipping_address' => 'required|array',
             'payment_method' => 'required|string',
-            'notes' => 'nullable|string'
+            'notes' => 'nullable|string',
+            'email' => 'nullable|email',
+            'phone' => 'nullable|string'
         ]);
 
+        return $this->createOrder($validated, $request->user());
+    }
+
+    public function guestStore(Request $request)
+    {
+        $validated = $request->validate([
+            'items' => 'required|array|min:1',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.variant_id' => 'nullable|exists:variants,id',
+            'items.*.quantity' => 'required|integer|min:1',
+            'shipping_address' => 'required|array',
+            'payment_method' => 'required|string',
+            'notes' => 'nullable|string',
+            'email' => 'required|email',
+            'phone' => 'required|string'
+        ]);
+
+        return $this->createOrder($validated, null);
+    }
+
+    private function createOrder($validated, $user = null)
+    {
         DB::beginTransaction();
         try {
             $subtotal = 0;
@@ -56,10 +81,16 @@ class OrderController extends Controller
             }
 
             $tax = $subtotal * 0.05; // Example 5% tax
-            $total = $subtotal + $tax;
+            $shippingCost = ($validated['shipping_method'] ?? 'standard') === 'express' ? 25 : 0;
+            $total = $subtotal + $tax + $shippingCost;
+
+            $email = $user ? $user->email : ($validated['email'] ?? null);
+            $phone = $validated['phone'] ?? ($validated['shipping_address']['phone'] ?? null);
 
             $order = Order::create([
-                'user_id' => $request->user()->id,
+                'user_id' => $user ? $user->id : null,
+                'email' => $email,
+                'phone' => $phone,
                 'status' => 'pending',
                 'subtotal' => $subtotal,
                 'tax' => $tax,
@@ -71,23 +102,23 @@ class OrderController extends Controller
             ]);
 
             // Save address to user_addresses if it's new
-            if ($request->user()) {
+            if ($user && isset($validated['shipping_address']['save_address']) && $validated['shipping_address']['save_address'] !== false) {
                 $addrData = $validated['shipping_address'];
-                $existing = $request->user()->addresses()
+                $existing = $user->addresses()
                     ->where('address_line1', $addrData['address'] ?? $addrData['address_line1'] ?? '')
                     ->where('city', $addrData['city'] ?? '')
                     ->first();
                 
                 if (!$existing) {
-                    $request->user()->addresses()->create([
-                        'first_name' => $addrData['firstName'] ?? $addrData['first_name'] ?? $request->user()->name,
+                    $user->addresses()->create([
+                        'first_name' => $addrData['firstName'] ?? $addrData['first_name'] ?? $user->name,
                         'last_name' => $addrData['lastName'] ?? $addrData['last_name'] ?? '',
                         'address_line1' => $addrData['address'] ?? $addrData['address_line1'] ?? '',
                         'city' => $addrData['city'] ?? '',
                         'state' => $addrData['state'] ?? 'Dubai',
                         'postal_code' => $addrData['postalCode'] ?? $addrData['postal_code'] ?? '00000',
                         'type' => $addrData['type'] ?? 'home',
-                        'is_default' => $request->user()->addresses()->count() === 0
+                        'is_default' => $user->addresses()->count() === 0
                     ]);
                 }
             }
@@ -98,6 +129,9 @@ class OrderController extends Controller
             }
 
             DB::commit();
+
+            // Fire event
+            event(new OrderPlaced($order));
 
             return response()->json($order->load('items.product'), 201);
         } catch (\Exception $e) {

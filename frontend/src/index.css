@@ -261,6 +261,17 @@
   animation: anxiety-pulse 2.5s infinite ease-in-out;
 }
 
+/* Badge Pulse Animation (for cart/wishlist count changes) */
+@keyframes badge-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+
+.animate-badge-pulse {
+  animation: badge-pulse 0.4s ease-out;
+}
+
 /* HTML Content Rendering (Database Descriptions & Specs) */
 .html-content-wrapper h1,
 .html-content-wrapper h2,

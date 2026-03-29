@@ -12,8 +12,6 @@ export function Layout() {
   const location = useLocation();
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
-  const isCartPage = location.pathname === '/cart';
-  const isNoBottomNavPage = location.pathname.startsWith('/category') || location.pathname.startsWith('/products/') || location.pathname === '/cart' || location.pathname === '/checkout';
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -38,14 +36,20 @@ export function Layout() {
         </div>
       )}
 
-      {!isAuthPage && <Navbar />}
+      {/* Navbar handles its own auth-page hiding internally */}
+      <Navbar />
 
+      {/* Main content — always pad bottom for mobile bottom nav */}
       <main className={`flex-1 w-full max-w-[1440px] mx-auto ${isAuthPage ? '' : 'pb-20 lg:pb-0'}`}>
         <Outlet />
       </main>
 
-      {!isAuthPage && (isCartPage ? <div className="hidden lg:block"><Footer /></div> : <Footer />)}
-      {!isAuthPage && !isNoBottomNavPage && <BottomNav />}
+      {/* Footer — always visible except auth pages */}
+      {!isAuthPage && <Footer />}
+
+      {/* Bottom nav — always visible on mobile except auth pages */}
+      {!isAuthPage && <BottomNav />}
+
       <AIAssistant />
       <Toaster position="top-right" richColors closeButton />
     </div>

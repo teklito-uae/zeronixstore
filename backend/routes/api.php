@@ -20,6 +20,9 @@ Route::get('/products/price-range', [ProductController::class, 'getPriceRange'])
 Route::get('/products/{slug}', [ProductController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);
 
+// Guest Order Route
+Route::post('/guest/orders', [OrderController::class, 'guestStore']);
+
 // Protected routes
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/auth/logout', [AuthController::class, 'logout']);

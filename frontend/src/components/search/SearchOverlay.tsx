@@ -265,7 +265,7 @@ export function SearchOverlay({ mode, isOpen: externalOpen, onClose }: SearchOve
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setIsFocused(true)}
-          placeholder="Search high-end gear..."
+          placeholder="Search for laptops, routers, gaming gear…"
           className="w-full h-11 bg-bg-surface border border-border-subtle rounded-full pl-12 pr-10 text-sm focus:border-emerald-500/50 focus:ring-4 focus:ring-emerald-500/5 transition-all outline-none text-text-primary placeholder:text-text-muted"
         />
         {query && (
