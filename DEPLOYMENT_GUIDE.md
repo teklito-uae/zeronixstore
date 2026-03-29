@@ -17,7 +17,7 @@ Before pushing to GitHub, ensure your local environment is ready:
 2.  **Push Changes**:
     ```bash
     git add .
-    git commit -m "chore: ready for deployment"
+    git commit -m "fix: migration order and backend routing"
     git push origin main
     ```
 
@@ -87,9 +87,10 @@ Create/Edit the `.htaccess` file in the root of `public_html` (NOT inside `sourc
     RewriteBase /
 
     # 1. Route API requests to the Laravel public folder
-    RewriteRule ^api/(.*)$ source/backend/public/$1 [L]
+    RewriteRule ^api/(.*)$ source/backend/public/index.php [L,QSA]
 
-    # 2. Route all other requests to the React dist folder
+    # 2. Route all other requests to the React dist folder (Frontend)
+    RewriteCond %{REQUEST_URI} !^/api/
     RewriteCond %{REQUEST_URI} !^/source/
     RewriteRule ^(.*)$ source/frontend/dist/$1 [L]
 
