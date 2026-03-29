@@ -50,6 +50,9 @@ APP_KEY=base64:YOUR_GENERATED_KEY
 APP_DEBUG=false
 APP_URL=https://zeronix.store/api
 
+# IMPORTANT: Your Frontend .env (on your local machine) should use:
+# VITE_API_URL=https://zeronix.store
+
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -86,11 +89,12 @@ Create/Edit the `.htaccess` file in the root of `public_html` (NOT inside `sourc
     RewriteEngine On
     RewriteBase /
 
-    # 1. Route API requests to the Laravel public folder
-    RewriteRule ^api/(.*)$ source/backend/public/index.php [L,QSA]
+    # 1. Route API and Health checks to the Laravel public folder
+    RewriteRule ^(api|up)(/.*)?$ source/backend/public/index.php [L,QSA]
 
     # 2. Route all other requests to the React dist folder (Frontend)
     RewriteCond %{REQUEST_URI} !^/api/
+    RewriteCond %{REQUEST_URI} !^/up/
     RewriteCond %{REQUEST_URI} !^/source/
     RewriteRule ^(.*)$ source/frontend/dist/$1 [L]
 
