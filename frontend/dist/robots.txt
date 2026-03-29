@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Prevent indexing of internal routes like checkout/cart
+Disallow: /cart
+Disallow: /checkout
+Disallow: /profile
+
+# Point to backend generated sitemap
+Sitemap: http://192.168.70.153:8000/api/sitemap.xml
