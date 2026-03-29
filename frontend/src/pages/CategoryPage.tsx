@@ -1,37 +1,20 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/css';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { ProductCard } from '../components/product/ProductCard';
 import { useApiCache } from '../store/apiCache';
 import {
-  Zap, SlidersHorizontal, ChevronRight, X,
-  Laptop, Monitor, Cpu, MousePointer2, Printer, HardDrive,
-  Gamepad2, Headphones, Keyboard, Speaker, PackageSearch,
-  ChevronDown, ChevronLeft
+  SlidersHorizontal, ChevronRight, X,
+  PackageSearch, ChevronDown, ChevronLeft, Search
 } from 'lucide-react';
 import { Slider } from '../components/ui/slider';
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "../components/ui/sheet";
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../components/ui/accordion";
 import { ProductCardSkeleton } from '../components/ui/skeletons/ProductCardSkeleton';
 import { Breadcrumbs } from '../components/layout/Breadcrumbs';
-
-const getCategoryIcon = (name: string) => {
-  const n = name.toLowerCase();
-  if (n.includes('laptop')) return Laptop;
-  if (n.includes('monitor') || n.includes('screen')) return Monitor;
-  if (n.includes('processor') || n.includes('cpu') || n.includes('component')) return Cpu;
-  if (n.includes('printer') || n.includes('scanner') || n.includes('ink')) return Printer;
-  if (n.includes('storage') || n.includes('drive') || n.includes('ssd')) return HardDrive;
-  if (n.includes('gaming') || n.includes('console')) return Gamepad2;
-  if (n.includes('audio') || n.includes('headphone')) return Headphones;
-  if (n.includes('keyboard')) return Keyboard;
-  if (n.includes('mouse')) return MousePointer2;
-  if (n.includes('speaker')) return Speaker;
-  return Zap;
-};
 
 export default function CategoryPage() {
   const params = useParams();
@@ -39,6 +22,7 @@ export default function CategoryPage() {
   const path = params["*"] || '';
   const slug = path.split('/').filter(Boolean).pop();
   const searchQuery = new URLSearchParams(location.search).get('search') || '';
+  const navigate = useNavigate();
 
   const [categoriesTree, setCategoriesTree] = useState<any[]>([]);
   const [currentCategory, setCurrentCategory] = useState<any>(null);
@@ -203,110 +187,136 @@ export default function CategoryPage() {
   const hasActiveFilters = selectedBrands.length > 0 || selectedPrice[0] > priceRange.min || selectedPrice[1] < priceRange.max;
 
   // ── Filter Panel Content ──
-  const FilterContent = ({ isMobile = false }: { isMobile?: boolean }) => (
-    <div className="space-y-8">
-      {/* Category Tree */}
-      <div>
-        <h4 className="font-black text-[10px] text-text-muted uppercase tracking-[0.2em] mb-4 opacity-50">Explore</h4>
-        <div className="space-y-3">
-          {categoryPath[0] && (
-            <div className="space-y-1.5">
-              <Link to={`/category/${categoryPath[0].slug}`}
-                className={`text-xs font-bold flex items-center justify-between transition-colors uppercase tracking-wider ${categoryPath[0].slug === slug ? 'text-emerald-500' : 'text-text-primary hover:text-emerald-500'}`}>
-                <span>{categoryPath[0].name}</span>
-                <span className="text-[10px] opacity-30">({categoryPath[0].total_products_count || 0})</span>
-              </Link>
-              <div className="pl-3 border-l-2 border-border-subtle/40 space-y-1.5 pt-0.5">
-                {(categoryPath[0].children || []).map((child: any) => {
-                  const isActive = child.slug === slug || categoryPath.some(p => p.id === child.id);
-                  return (
-                    <div key={child.id} className="space-y-1.5">
-                      <Link to={`/category/${child.slug}`}
-                        className={`text-xs flex items-center justify-between transition-colors ${isActive ? 'font-bold text-emerald-500' : 'text-text-muted hover:text-text-primary'}`}>
-                        <span>{child.name}</span>
-                        <span className="text-[10px] opacity-30">({child.total_products_count || 0})</span>
-                      </Link>
-                      {isActive && child.children?.length > 0 && (
-                        <div className="pl-3 space-y-1.5 border-l border-border-subtle/30">
-                          {child.children.map((sub: any) => (
-                            <Link key={sub.id} to={`/category/${sub.slug}`}
-                              className={`text-[11px] flex items-center justify-between transition-colors ${sub.slug === slug ? 'font-bold text-emerald-500' : 'text-text-muted hover:text-text-primary'}`}>
-                              <span>{sub.name}</span>
-                              <span className="text-[10px] opacity-30">({sub.total_products_count || 0})</span>
-                            </Link>
-                          ))}
+  const FilterContent = ({ isMobile = false }: { isMobile?: boolean }) => {
+    const [localQuery, setLocalQuery] = useState(searchQuery);
+
+    const handleSearchSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      // If we are searching, we usually search across the entire catalog and let the backend filter
+      // Navigate to the current category or all products with the new query
+      if (localQuery.trim()) {
+        navigate(`/category${slug ? `/${slug}` : ''}?search=${encodeURIComponent(localQuery.trim())}`);
+      } else {
+        navigate(`/category${slug ? `/${slug}` : ''}`);
+      }
+      if (isMobile) setShowFilters(false);
+    };
+
+    return (
+      <div className="flex flex-col h-[calc(100vh-200px)]">
+        <Accordion type="multiple" defaultValue={["search", "subcategory", "manufacturer", "price"]} className="w-full flex-1 overflow-y-auto no-scrollbar pr-2">
+          
+          {/* Search Accordion Item */}
+          <AccordionItem value="search" className="border-b border-border-subtle">
+            <AccordionTrigger className="text-sm font-bold text-text-primary hover:no-underline py-4">Search</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <form onSubmit={handleSearchSubmit} className="relative">
+                <Input 
+                  placeholder="" 
+                  className="pl-3 pr-10 bg-bg-primary h-10 border-border-subtle rounded-md text-sm shadow-none focus-visible:ring-1 focus-visible:ring-emerald-500" 
+                  value={localQuery} 
+                  onChange={(e) => setLocalQuery(e.target.value)} 
+                />
+                <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-emerald-500">
+                  <Search className="w-4 h-4" />
+                </button>
+              </form>
+            </AccordionContent>
+          </AccordionItem>
+          
+          {/* SubCategory Accordion Item */}
+          {swiperItems.length > 0 && (
+            <AccordionItem value="subcategory" className="border-b border-border-subtle">
+              <AccordionTrigger className="text-sm font-bold text-text-primary hover:no-underline py-4">SubCategory</AccordionTrigger>
+              <AccordionContent className="pb-4">
+                <div className="space-y-2.5 pt-1">
+                  {swiperItems.map(item => {
+                    const isActive = item.slug === slug;
+                    return (
+                      <div key={item.id} className="flex items-center gap-3 group cursor-pointer" onClick={(e) => { e.preventDefault(); navigate(`/category/${item.slug}`); if(isMobile) setShowFilters(false); }}>
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${isActive ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-border-subtle bg-bg-surface group-hover:border-emerald-500/50'}`}>
+                          {isActive && <div className="w-2 h-2 bg-white rounded-sm" />}
                         </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+                        <span className={`text-sm flex-1 flex items-center justify-between transition-colors ${isActive ? 'text-emerald-500 font-bold' : 'text-text-muted group-hover:text-text-primary'}`}>
+                          {item.name}
+                          <span className="text-xs opacity-50">({item.total_products_count || 0})</span>
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
           )}
+
+          {/* Manufacturer Accordion Item */}
+          <AccordionItem value="manufacturer" className="border-b border-border-subtle">
+            <AccordionTrigger className="text-sm font-bold text-text-primary hover:no-underline py-4">Manufacturer</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              {availableBrands.length > 0 ? (
+                <div className="space-y-2.5 pt-1 max-h-60 overflow-y-auto no-scrollbar">
+                  {availableBrands.map((brand: any) => {
+                    const isChecked = selectedBrands.includes(brand.slug);
+                    return (
+                      <label key={brand.id} className="flex items-center gap-3 cursor-pointer group">
+                        <div className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${isChecked ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-border-subtle bg-bg-surface group-hover:border-emerald-500/50'}`}>
+                          {isChecked && <div className="w-2 h-2 bg-white rounded-sm" />}
+                        </div>
+                        <input type="checkbox" checked={isChecked} onChange={() => toggleBrand(brand.slug)} className="hidden" />
+                        <span className={`text-sm flex-1 flex items-center justify-between transition-colors ${isChecked ? 'text-emerald-500 font-bold' : 'text-text-muted group-hover:text-text-primary'}`}>
+                          {brand.name}
+                          <span className="text-xs opacity-50">({brand.products_count || 0})</span>
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-[11px] text-text-muted opacity-50">No brands found</p>
+              )}
+            </AccordionContent>
+          </AccordionItem>
+
+          {/* Price Accordion Item */}
+          <AccordionItem value="price" className="border-b-0">
+            <AccordionTrigger className="text-sm font-bold text-text-primary hover:no-underline py-4">Price</AccordionTrigger>
+            <AccordionContent className="pb-4">
+              <div className="flex items-center gap-2 mb-6 mt-1">
+                <div className="flex-1 bg-bg-primary border border-border-subtle rounded flex items-center px-2 py-1.5 focus-within:ring-1 focus-within:ring-emerald-500 transition-shadow">
+                   <span className="text-text-muted text-[10px] mr-1">$</span>
+                   <input type="number" value={Math.round(selectedPrice[0])} className="w-full bg-transparent text-xs font-bold outline-none text-text-primary h-6" onChange={(e) => handlePriceChange([Number(e.target.value), selectedPrice[1]])}/>
+                </div>
+                <span className="text-text-muted text-xs">to</span>
+                <div className="flex-1 bg-bg-primary border border-border-subtle rounded flex items-center px-2 py-1.5 focus-within:ring-1 focus-within:ring-emerald-500 transition-shadow">
+                   <span className="text-text-muted text-[10px] mr-1">$</span>
+                   <input type="number" value={Math.round(selectedPrice[1])} className="w-full bg-transparent text-xs font-bold outline-none text-text-primary h-6" onChange={(e) => handlePriceChange([selectedPrice[0], Number(e.target.value)])}/>
+                </div>
+              </div>
+              <div className="px-1.5">
+                <Slider
+                  min={priceRange.min} max={priceRange.max} step={1}
+                  value={[selectedPrice[0], selectedPrice[1]]}
+                  onValueChange={handlePriceChange}
+                  className="mb-8"
+                />
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+
+        </Accordion>
+        
+        {/* Actions - Reset All Button */}
+        <div className="pt-4 border-t border-border-subtle/50 mt-auto bg-bg-primary">
+          <Button 
+            className="w-full bg-black text-white hover:bg-black/80 dark:bg-white dark:text-black dark:hover:bg-gray-200 font-bold text-xs h-11 tracking-wider rounded-md" 
+            onClick={() => { resetFilters(); setLocalQuery(''); if (isMobile) setShowFilters(false); }}
+          >
+            RESET ALL
+          </Button>
         </div>
       </div>
-
-      {/* Price Range */}
-      <div>
-        <div className="flex items-center justify-between mb-4">
-          <h4 className="font-black text-[10px] text-text-muted uppercase tracking-[0.2em] opacity-50">Price Range</h4>
-          <span className="text-[10px] font-bold text-emerald-500 bg-emerald-500/10 px-2 py-1 rounded-full border border-emerald-500/20">
-            AED {Math.round(selectedPrice[0])} - {Math.round(selectedPrice[1])}
-          </span>
-        </div>
-        <div className="px-1">
-          <Slider
-            min={priceRange.min} max={priceRange.max} step={1}
-            value={[selectedPrice[0], selectedPrice[1]]}
-            onValueChange={handlePriceChange}
-            className="mb-6"
-          />
-          <div className="grid grid-cols-2 gap-2 mt-3">
-            <div className="bg-bg-surface border border-border-subtle rounded-xl p-2.5">
-              <span className="text-[9px] text-text-muted block uppercase font-bold tracking-widest opacity-50">From</span>
-              <span className="text-xs font-bold text-text-primary">AED {Math.round(selectedPrice[0])}</span>
-            </div>
-            <div className="bg-bg-surface border border-border-subtle rounded-xl p-2.5">
-              <span className="text-[9px] text-text-muted block uppercase font-bold tracking-widest opacity-50">To</span>
-              <span className="text-xs font-bold text-text-primary">AED {Math.round(selectedPrice[1])}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Brands */}
-      <div>
-        <h4 className="font-black text-[10px] text-text-muted uppercase tracking-[0.2em] mb-4 opacity-50">Brands</h4>
-        {availableBrands.length > 0 ? (
-          <div className="space-y-0.5 max-h-60 overflow-y-auto no-scrollbar">
-            {availableBrands.map((brand: any) => {
-              const isChecked = selectedBrands.includes(brand.slug);
-              return (
-                <label key={brand.id} className="flex items-center gap-3 p-2 rounded-lg cursor-pointer hover:bg-bg-surface transition-colors">
-                  <input type="checkbox" checked={isChecked} onChange={() => toggleBrand(brand.slug)}
-                    className="w-3.5 h-3.5 rounded border-border-subtle text-emerald-500 focus:ring-emerald-500/20" />
-                  <span className={`text-xs transition-colors ${isChecked ? 'text-emerald-500 font-bold' : 'text-text-primary'}`}>
-                    {brand.name}
-                  </span>
-                </label>
-              );
-            })}
-          </div>
-        ) : (
-          <p className="text-[11px] text-text-muted opacity-50">No brands found</p>
-        )}
-      </div>
-
-      {/* Actions */}
-      <div className="pt-5 border-t border-border-subtle/50 flex flex-col gap-2">
-        <Button variant="ghost" size="sm" className="w-full text-xs font-bold rounded-xl h-10 text-text-muted" onClick={resetFilters}>Reset All</Button>
-        {isMobile && (
-          <Button size="sm" className="w-full text-xs font-bold rounded-xl h-11 bg-emerald-500 hover:bg-emerald-600 text-white shadow-lg shadow-emerald-500/20"
-            onClick={() => setShowFilters(false)}>Show Results</Button>
-        )}
-      </div>
-    </div>
-  );
+    );
+  };
 
   // ── Sort Options ──
   const sortOptions = [
@@ -432,7 +442,7 @@ export default function CategoryPage() {
         </div>
       </div>
 
-      {/* ─── Desktop: Breadcrumbs + Subcategory Cards ─── */}
+      {/* ─── Desktop: Breadcrumbs ─── */}
       <div className="hidden lg:block bg-bg-primary border-b border-border-subtle/50">
         <div className="max-w-[1440px] mx-auto px-6 py-2">
           <div className="flex items-center justify-between">
@@ -449,39 +459,6 @@ export default function CategoryPage() {
             <span className="text-xs font-bold text-text-muted"><span className="text-text-primary">{totalProducts}</span> products</span>
           </div>
         </div>
-
-        {/* Desktop Subcategory Cards */}
-        {swiperItems.length > 0 && (
-          <div className="max-w-[1440px] mx-auto px-6 pb-5">
-            <Swiper spaceBetween={10} slidesPerView="auto" className="!py-1">
-              {swiperItems.map(item => {
-                const isActive = item.slug === slug;
-                const Icon = getCategoryIcon(item.name);
-                return (
-                  <SwiperSlide key={item.id} className="!w-auto">
-                    <Link to={`/category/${item.slug}`}
-                      className={`flex flex-col items-center gap-2.5 p-3 rounded-xl border transition-all w-24 ${
-                        isActive
-                          ? 'bg-emerald-500/5 border-emerald-500 shadow-sm'
-                          : 'bg-bg-surface border-border-subtle hover:border-emerald-500/40'
-                      }`}>
-                      <div className={`aspect-square w-full rounded-lg flex items-center justify-center transition-all ${
-                        isActive ? 'bg-emerald-500 text-white shadow-md' : 'bg-bg-primary text-text-muted'
-                      }`}>
-                        {item.image_url
-                          ? <img src={item.image_url} alt={item.name} className={`h-full w-full object-contain p-2 ${isActive ? 'invert' : 'opacity-80'}`} />
-                          : <Icon className="h-5 w-5 stroke-[1.5px]" />}
-                      </div>
-                      <span className={`font-bold text-[9px] text-center line-clamp-2 uppercase tracking-wider ${isActive ? 'text-emerald-500' : 'text-text-primary'}`}>
-                        {item.name}
-                      </span>
-                    </Link>
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          </div>
-        )}
       </div>
 
       {/* ─── Main Body ─── */}
@@ -491,10 +468,6 @@ export default function CategoryPage() {
           {/* Desktop Filters Sidebar */}
           <div className="lg:w-64 flex-shrink-0 hidden lg:block">
             <div className="sticky top-24 pr-3">
-              <div className="flex items-center gap-2 pb-4 mb-6 border-b border-border-subtle/50">
-                <SlidersHorizontal className="h-3.5 w-3.5 text-emerald-500" />
-                <h3 className="font-black text-[10px] uppercase tracking-[0.2em] text-text-primary">Filters</h3>
-              </div>
               <FilterContent />
             </div>
           </div>

@@ -21,7 +21,7 @@ class OrderConfirmationMail extends Mailable implements ShouldQueue
     {
         return new Envelope(
             subject: "Order confirmed — #{$this->order->order_number} | Zeronix",
-            from: new Address('orders@zeronix.store', 'Zeronix Store'),
+            from: new Address('ismail@zeronix.ae', 'Zeronix Store'),
             replyTo: [new Address('support@zeronix.store', 'Zeronix Support')],
         );
     }

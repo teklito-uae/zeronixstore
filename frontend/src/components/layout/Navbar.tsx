@@ -289,7 +289,7 @@ export function Navbar() {
                           {mainCategory.children.map((subCategory: any) => (
                             <div key={subCategory.id} className="space-y-3">
                               <Link
-                                to={`/category/${mainCategory.slug}/${subCategory.slug}`}
+                                to={`/category/${subCategory.slug}`}
                                 className="font-bold text-sm text-text-primary hover:text-emerald-500 transition-colors border-b border-emerald-500/20 pb-2 block"
                               >
                                 {subCategory.name}
@@ -300,7 +300,7 @@ export function Navbar() {
                                   {subCategory.children.map((subSub: any) => (
                                     <Link
                                       key={subSub.id}
-                                      to={`/category/${mainCategory.slug}/${subCategory.slug}/${subSub.slug}`}
+                                      to={`/category/${subSub.slug}`}
                                       className="text-[13px] text-text-muted hover:text-emerald-500 transition-colors font-medium flex items-center gap-2 group/link"
                                     >
                                       <span className="h-1 w-1 rounded-full bg-border-subtle group-hover/link:bg-emerald-500 transition-colors flex-shrink-0"></span>

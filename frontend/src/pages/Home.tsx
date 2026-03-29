@@ -469,7 +469,7 @@ export default function Home() {
             <h2 className="text-base lg:text-xl font-black text-text-primary tracking-tight">Signature Enclosures</h2>
             <p className="text-[10px] text-text-muted mt-0.5">Premium PC cases for the perfect build.</p>
           </div>
-          <Link to="/category/computers-laptops/components/computer-cases" className="text-[10px] font-bold text-accent-primary uppercase tracking-widest flex items-center gap-1">
+          <Link to="/category/computer-cases" className="text-[10px] font-bold text-accent-primary uppercase tracking-widest flex items-center gap-1">
             View PC Cases <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -502,7 +502,7 @@ export default function Home() {
             <h2 className="text-base lg:text-xl font-black text-text-primary tracking-tight">Thermal Solutions</h2>
             <p className="text-[10px] text-text-muted mt-0.5">Keep your performance cool and stable.</p>
           </div>
-          <Link to="/category/computers-laptops/components/cooling" className="text-[10px] font-bold text-accent-primary uppercase tracking-widest flex items-center gap-1">
+          <Link to="/category/cooling" className="text-[10px] font-bold text-accent-primary uppercase tracking-widest flex items-center gap-1">
             View PC Cooling <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -535,7 +535,7 @@ export default function Home() {
             <h2 className="text-base lg:text-xl font-black text-text-primary tracking-tight">Reliable Power</h2>
             <p className="text-[10px] text-text-muted mt-0.5">High-efficiency power supplies for every build.</p>
           </div>
-          <Link to="/category/computers-laptops/components/power-supplies" className="text-[10px] font-bold text-accent-primary uppercase tracking-widest flex items-center gap-1">
+          <Link to="/category/power-supplies" className="text-[10px] font-bold text-accent-primary uppercase tracking-widest flex items-center gap-1">
             Shop Power Supplies <ArrowRight className="h-3 w-3" />
           </Link>
         </div>
@@ -576,64 +576,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6.5 Customer Reviews: Dual Marquee with Grid Background */}
-      <section className="relative py-12 md:py-24 overflow-hidden bg-bg-primary border-t border-border-subtle" style={{ backgroundImage: 'radial-gradient(circle at center, var(--border-subtle) 1px, transparent 1px)', backgroundSize: '40px 40px' }}>
-        <div className="absolute inset-0 bg-gradient-to-b from-bg-primary via-transparent to-bg-primary pointer-events-none"></div>
-        <div className="absolute inset-x-0 top-0 h-20 md:h-32 bg-gradient-to-b from-bg-primary to-transparent z-10 pointer-events-none"></div>
-        <div className="absolute inset-x-0 bottom-0 h-20 md:h-32 bg-gradient-to-t from-bg-primary to-transparent z-10 pointer-events-none"></div>
 
-        <div className="relative z-20 text-center mb-8 md:mb-16 space-y-2 md:space-y-4 px-4">
-          <div className="inline-block px-3 py-1 rounded-full bg-bg-surface border border-border-subtle text-[9px] font-bold uppercase tracking-widest text-text-muted mb-2 md:mb-4">What they say</div>
-          <h2 className="text-xl md:text-4xl font-bold font-display tracking-tight text-text-primary leading-tight">Trusted by gamers and<br />creators across the UAE</h2>
-        </div>
-
-        {/* Marquee Container */}
-        <div className="relative z-10 flex flex-col gap-6 rotate-[-2deg] scale-105">
-          {/* Row 1: Moves Left */}
-          <div className="flex gap-4 md:gap-6 animate-marquee">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={`row1-${i}`} className="flex-none w-[280px] md:w-[420px] p-4 md:p-6 rounded-full bg-bg-surface/80 backdrop-blur-md border border-border-subtle flex items-center gap-3 md:gap-4 hover:border-accent-primary/30 transition-colors">
-                <img src={`https://i.pravatar.cc/150?img=${i}`} alt="Avatar" className="w-10 h-10 md:w-14 md:h-14 rounded-full border-2 border-accent-primary/15 object-cover flex-shrink-0" />
-                <div>
-                  <h4 className="text-xs md:text-sm font-bold text-text-primary">Customer Name {i}</h4>
-                  <p className="text-[10px] md:text-[11px] text-text-muted">"Absolutely stellar service. The 4090 arrived next day."</p>
-                </div>
-              </div>
-            ))}
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <div key={`row1-dup-${i}`} className="flex-none w-[280px] md:w-[420px] p-4 md:p-6 rounded-full bg-bg-surface/80 backdrop-blur-md border border-border-subtle flex items-center gap-3 md:gap-4 hover:border-accent-primary/30 transition-colors">
-                <img src={`https://i.pravatar.cc/150?img=${i}`} alt="Avatar" className="w-10 h-10 md:w-14 md:h-14 rounded-full border-2 border-accent-primary/15 object-cover flex-shrink-0" />
-                <div>
-                  <h4 className="text-xs md:text-sm font-bold text-text-primary">Customer Name {i}</h4>
-                  <p className="text-[10px] md:text-[11px] text-text-muted">"Absolutely stellar service. The 4090 arrived next day."</p>
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* Row 2: Moves Right */}
-          <div className="flex gap-4 md:gap-6 animate-marquee-right" style={{ animationDirection: 'reverse' }}>
-            {[7, 8, 9, 10, 11, 12].map((i) => (
-              <div key={`row2-${i}`} className="flex-none w-[280px] md:w-[420px] p-4 md:p-6 rounded-full bg-bg-surface/80 backdrop-blur-md border border-border-subtle flex items-center gap-3 md:gap-4 hover:border-accent-primary/30 transition-colors">
-                <img src={`https://i.pravatar.cc/150?img=${i}`} alt="Avatar" className="w-10 h-10 md:w-14 md:h-14 rounded-full border-2 border-accent-primary/15 object-cover flex-shrink-0" />
-                <div>
-                  <h4 className="text-xs md:text-sm font-bold text-text-primary">Customer Name {i}</h4>
-                  <p className="text-[10px] md:text-[11px] text-text-muted">"Their custom build team is unmatched. Highly recommended."</p>
-                </div>
-              </div>
-            ))}
-            {[7, 8, 9, 10, 11, 12].map((i) => (
-              <div key={`row2-dup-${i}`} className="flex-none w-[280px] md:w-[420px] p-4 md:p-6 rounded-full bg-bg-surface/80 backdrop-blur-md border border-border-subtle flex items-center gap-3 md:gap-4 hover:border-accent-primary/30 transition-colors">
-                <img src={`https://i.pravatar.cc/150?img=${i}`} alt="Avatar" className="w-10 h-10 md:w-14 md:h-14 rounded-full border-2 border-accent-primary/15 object-cover flex-shrink-0" />
-                <div>
-                  <h4 className="text-xs md:text-sm font-bold text-text-primary">Customer Name {i}</h4>
-                  <p className="text-[10px] md:text-[11px] text-text-muted">"Their custom build team is unmatched. Highly recommended."</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* 6.5 Secondary Category Carousel (Lazy Loaded) */}
       <section ref={arrivalsRef} className="py-4 lg:py-6 px-4 sm:px-6 lg:px-8 space-y-3 lg:space-y-4">

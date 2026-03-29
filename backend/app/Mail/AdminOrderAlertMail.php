@@ -21,7 +21,7 @@ class AdminOrderAlertMail extends Mailable implements ShouldQueue
     {
         return new Envelope(
             subject: "🛒 New Order #{$this->order->order_number} — AED {$this->order->total}",
-            from: new Address('orders@zeronix.store', 'Zeronix Store'),
+            from: new Address('ismail@zeronix.ae', 'Zeronix Store'),
         );
     }
 

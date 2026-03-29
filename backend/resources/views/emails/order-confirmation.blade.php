@@ -68,7 +68,7 @@
             
             <h4 style="margin-bottom: 5px;">Delivery Estimate</h4>
             <p style="margin: 0; color: #10b981;">
-                {{ ($order->total - $order->subtotal - $order->tax) > 0 ? '1–2 business days (Express)' : '3–5 business days (Standard)' }}
+                1–2 business days (Standard)
             </p>
         </div>
 
