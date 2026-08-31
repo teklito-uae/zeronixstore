@@ -3,9 +3,16 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
+    use SoftDeletes;
+
+    // Deleting a product must never destroy historical order line items.
+    // With SoftDeletes, Product::delete() (called from
+    // ProductController::destroy) sets deleted_at instead of issuing a real
+    // DELETE, so the cascadeOnDelete on order_items.product_id never fires.
     protected $fillable = [
         'name', 'slug', 'description', 'category_id', 'brand', 'brand_id',
         'price', 'sale_price', 'cpu', 'gpu', 'ram', 'storage',

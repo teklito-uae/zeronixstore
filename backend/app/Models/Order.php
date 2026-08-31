@@ -14,11 +14,15 @@ class Order extends Model
 
     protected static function booted()
     {
-        static::creating(function ($order) {
+        // Generated post-insert from the DB's own auto-increment id, which the
+        // database guarantees is unique even under concurrent order creation.
+        // (Previously this pre-computed `latest('id') + 1` before insert, which
+        // two concurrent requests could both read before either committed,
+        // producing a duplicate order_number / unique-constraint failure.)
+        static::created(function ($order) {
             if (!$order->order_number) {
-                $latest = static::latest('id')->first();
-                $nextId = $latest ? $latest->id + 1 : 1;
-                $order->order_number = 'ZNX-' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+                $order->order_number = 'ZNX-' . str_pad((string) $order->id, 4, '0', STR_PAD_LEFT);
+                $order->saveQuietly();
             }
         });
     }

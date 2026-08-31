@@ -19,7 +19,11 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => explode(',', env('ALLOWED_ORIGINS', '*')),
+    // No wildcard here: `supports_credentials` is true below, and browsers reject
+    // "*" combined with credentialed requests outright. Set ALLOWED_ORIGINS in .env
+    // to a comma-separated list of exact origins (scheme + host + port), e.g.
+    // ALLOWED_ORIGINS=https://zeronix.ae,https://www.zeronix.ae
+    'allowed_origins' => explode(',', env('ALLOWED_ORIGINS', 'http://localhost:5173')),
 
     'allowed_origins_patterns' => [],
 

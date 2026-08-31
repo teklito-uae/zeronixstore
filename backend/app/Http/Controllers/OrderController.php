@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Events\OrderPlaced;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OrderController extends Controller
 {
@@ -136,7 +137,19 @@ class OrderController extends Controller
             return response()->json($order->load('items.product'), 201);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['message' => 'Order creation failed', 'error' => $e->getMessage()], 500);
+            Log::error('Order creation failed', [
+                'message' => $e->getMessage(),
+                'user_id' => $user?->id,
+            ]);
+
+            // Never leak internal exception details (queries, stack traces) to
+            // the client — log them server-side and return a generic message.
+            // The raw message is included only when app.debug is enabled,
+            // which must never be true in production.
+            return response()->json([
+                'message' => 'We could not place your order. Please try again.',
+                'error' => config('app.debug') ? $e->getMessage() : null,
+            ], 500);
         }
     }
 
