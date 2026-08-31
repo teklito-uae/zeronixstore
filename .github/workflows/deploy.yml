@@ -1,0 +1,98 @@
+name: Build and Deploy to Production
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build Frontend
+        env:
+          VITE_API_URL: https://www.zeronix.store/api
+        run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, mysql, zip, pdo_mysql
+          tools: composer:v2
+
+      - name: Build Backend
+        run: |
+          cd backend
+          composer install --no-dev --optimize-autoloader
+          rm -f bootstrap/cache/*.php
+
+      # Hostinger's Git deployment path is public_html/source, and the
+      # domain-root .htaccess (managed manually in hPanel, outside this repo)
+      # routes into source/backend and source/frontend/dist. So the
+      # `production` branch must mirror that "source" layout exactly:
+      #   backend/          -> Laravel app
+      #   frontend/dist/    -> built React app
+      - name: Prepare Deploy Folder
+        run: |
+          mkdir -p deploy/frontend
+          mkdir -p deploy/backend
+
+          # 1. Copy Frontend Build (kept nested under frontend/dist to match
+          #    the existing public_html/.htaccess routing rules)
+          cp -r frontend/dist deploy/frontend/dist
+
+          # 2. Copy Backend Files
+          cp -r backend/* deploy/backend/
+
+          # 3. Inject production .env from the PRODUCTION_ENV repo secret
+          echo "${{ secrets.PRODUCTION_ENV }}" > deploy/backend/.env
+
+          # 4. Create Laravel storage folders (not tracked by git otherwise)
+          #    public/storage is a REAL directory here (not a symlink) -
+          #    config/filesystems.php points the 'public' disk straight at
+          #    public_path('storage'), so nothing needs storage:link.
+          mkdir -p deploy/backend/storage/app/public
+          mkdir -p deploy/backend/storage/framework/cache
+          mkdir -p deploy/backend/storage/framework/sessions
+          mkdir -p deploy/backend/storage/framework/views
+          mkdir -p deploy/backend/storage/logs
+          mkdir -p deploy/backend/public/storage
+          touch deploy/backend/storage/app/public/.gitkeep
+          touch deploy/backend/storage/framework/cache/.gitkeep
+          touch deploy/backend/storage/framework/sessions/.gitkeep
+          touch deploy/backend/storage/framework/views/.gitkeep
+          touch deploy/backend/storage/logs/.gitkeep
+          touch deploy/backend/public/storage/.gitkeep
+          chmod -R 775 deploy/backend/storage deploy/backend/public/storage
+
+          # 5. Remove .gitignore files inside deploy to ensure everything is pushed
+          find deploy -name ".gitignore" -type f -delete
+
+      - name: Deploy to Production Branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: deploy
+          branch: production
+          clean: true
+          single-commit: false
+
+      - name: Trigger Hostinger Deployment
+        run: |
+          curl -fsS -X POST -H "Content-Type: application/json" -d '{}' "${{ secrets.HOSTINGER_DEPLOY_HOOK }}"
