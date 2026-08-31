@@ -13,10 +13,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Set up Node
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: 'npm'
@@ -50,6 +50,13 @@ jobs:
       #   backend/          -> Laravel app
       #   frontend/dist/    -> built React app
       - name: Prepare Deploy Folder
+        env:
+          # Passed as an env var (not inlined into the script) because
+          # GitHub Actions substitutes ${{ secrets.X }} into the script text
+          # *before* bash parses it - special characters in the secret
+          # (quotes, &, >, etc.) would otherwise be interpreted as shell
+          # syntax instead of literal data.
+          PRODUCTION_ENV: ${{ secrets.PRODUCTION_ENV }}
         run: |
           mkdir -p deploy/frontend
           mkdir -p deploy/backend
@@ -62,7 +69,7 @@ jobs:
           cp -r backend/* deploy/backend/
 
           # 3. Inject production .env from the PRODUCTION_ENV repo secret
-          echo "${{ secrets.PRODUCTION_ENV }}" > deploy/backend/.env
+          printf '%s\n' "$PRODUCTION_ENV" > deploy/backend/.env
 
           # 4. Create Laravel storage folders (not tracked by git otherwise)
           #    public/storage is a REAL directory here (not a symlink) -
