@@ -100,17 +100,6 @@ jobs:
           clean: true
           single-commit: false
 
-      - name: Debug Hostinger Secret (temporary - no value printed)
-        env:
-          HOSTINGER_DEPLOY_HOOK: ${{ secrets.HOSTINGER_DEPLOY_HOOK }}
-        run: |
-          echo "raw length: ${#HOSTINGER_DEPLOY_HOOK}"
-          printf '%s' "$HOSTINGER_DEPLOY_HOOK" | sha256sum
-          stripped="$(printf '%s' "$HOSTINGER_DEPLOY_HOOK" | tr -d '[:space:]')"
-          echo "stripped length: ${#stripped}"
-          printf '%s' "$stripped" | sha256sum
-          # expected: length 70, sha256 716bddf8ec7afcaf94725e3f594a2fd1ad81be616316f04b377bc4a145b1b4b
-
       - name: Trigger Hostinger Deployment
         env:
           HOSTINGER_DEPLOY_HOOK: ${{ secrets.HOSTINGER_DEPLOY_HOOK }}
