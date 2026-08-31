@@ -1,0 +1,65 @@
+import { Heart, Search, ShoppingCart, User } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { MegaMenu } from "@/components/layout/MegaMenu";
+import { MobileNav } from "@/components/layout/MobileNav";
+
+const cartCount = 2;
+
+export function Header() {
+  return (
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
+      <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
+        <MobileNav />
+
+        <Link to="/" className="shrink-0">
+          <img src="/zeronix-logo.webp" alt="Zeronix" className="h-4.5 w-auto sm:h-5" />
+        </Link>
+
+        <MegaMenu />
+
+        <form
+          role="search"
+          onSubmit={(e) => e.preventDefault()}
+          className="relative hidden flex-1 max-w-sm md:block"
+        >
+          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            type="search"
+            placeholder="Search laptops, GPUs, monitors..."
+            className="pl-9"
+          />
+        </form>
+
+        <div className="ml-auto flex items-center gap-1 sm:gap-2">
+          <Button variant="ghost" size="icon" className="md:hidden" aria-label="Search" asChild>
+            <Link to="/search">
+              <Search className="size-5" />
+            </Link>
+          </Button>
+          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden lg:inline-flex" asChild>
+            <Link to="/wishlist">
+              <Heart className="size-5" />
+            </Link>
+          </Button>
+          <Button variant="ghost" size="icon" aria-label="Account" className="hidden lg:inline-flex" asChild>
+            <Link to="/account">
+              <User className="size-5" />
+            </Link>
+          </Button>
+          <Button variant="ghost" size="icon" aria-label="Cart" className="relative" asChild>
+            <Link to="/cart">
+              <ShoppingCart className="size-5" />
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                  {cartCount}
+                </span>
+              )}
+            </Link>
+          </Button>
+        </div>
+      </div>
+    </header>
+  );
+}
