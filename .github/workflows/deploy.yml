@@ -101,5 +101,10 @@ jobs:
           single-commit: false
 
       - name: Trigger Hostinger Deployment
+        env:
+          HOSTINGER_DEPLOY_HOOK: ${{ secrets.HOSTINGER_DEPLOY_HOOK }}
         run: |
-          curl -fsS -X POST -H "Content-Type: application/json" -d '{}' "${{ secrets.HOSTINGER_DEPLOY_HOOK }}"
+          # Strip any stray whitespace/newlines from the secret (e.g. from
+          # copy-paste) so it can't corrupt the URL or the script.
+          url="$(printf '%s' "$HOSTINGER_DEPLOY_HOOK" | tr -d '[:space:]')"
+          curl -fsS -X POST -H "Content-Type: application/json" -d '{}' "$url"
