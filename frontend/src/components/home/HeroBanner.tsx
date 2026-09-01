@@ -44,7 +44,7 @@ export function HeroBanner() {
                 <img
                   src={slide.image}
                   alt=""
-                  className="aspect-[3419/887] w-full object-cover"
+                  className="aspect-[1750/550] w-full object-cover"
                   loading="eager"
                 />
               </div>

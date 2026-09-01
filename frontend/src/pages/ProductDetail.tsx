@@ -460,12 +460,12 @@ function ProductDetailView({ product }: { product: Product }) {
             <CarouselContent className="-ml-4">
               {relatedLoading
                 ? Array.from({ length: 5 }).map((_, i) => (
-                    <CarouselItem key={i} className="basis-1/3 pl-4 sm:basis-1/4 lg:basis-1/5">
+                    <CarouselItem key={i} className="basis-1/2 pl-4 sm:basis-1/4 lg:basis-1/5">
                       <ProductCardSkeleton />
                     </CarouselItem>
                   ))
                 : related.map((item) => (
-                    <CarouselItem key={item.id} className="basis-1/3 pl-4 sm:basis-1/4 lg:basis-1/5">
+                    <CarouselItem key={item.id} className="basis-1/2 pl-4 sm:basis-1/4 lg:basis-1/5">
                       <ProductCard product={item} />
                     </CarouselItem>
                   ))}
