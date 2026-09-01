@@ -167,6 +167,6 @@ class OrderController extends Controller
         ]);
 
         $order->update($validated);
-        return response()->json($order);
+        return response()->json($order->load('user', 'items.product'));
     }
 }

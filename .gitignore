@@ -28,6 +28,15 @@
 /frontend/npm-debug.log*
 /frontend/yarn-debug.log*
 /frontend/yarn-error.log*
+/frontend/stats.html
+/frontend/lint_output.txt
+
+# Backend scratch/debug artifacts (should never be committed)
+/backend/migration_error.txt
+/backend/probe_*.php
+/backend/probe_results.txt
+/backend/url_test.txt
+/backend/*.txt
 
 # Documentation
 DEPLOYMENT_GUIDE.md

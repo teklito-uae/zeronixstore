@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 960" width="1920" height="960">
+  <defs>
+    <linearGradient id="bg1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="55%" stop-color="#0b3b30"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <radialGradient id="glow1" cx="78%" cy="35%" r="55%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#10b981" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots1" width="28" height="28" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#ffffff" opacity="0.12"/>
+    </pattern>
+  </defs>
+  <rect width="1920" height="960" fill="url(#bg1)"/>
+  <rect width="1920" height="960" fill="url(#glow1)"/>
+  <rect width="1920" height="960" fill="url(#dots1)"/>
+  <polygon points="0,960 1920,960 1920,760 1400,960" fill="#ffffff" opacity="0.04"/>
+  <polygon points="1150,0 1920,0 1920,960 1550,960" fill="#ffffff" opacity="0.035"/>
+  <g transform="translate(1230,230)" opacity="0.9">
+    <rect x="0" y="0" width="500" height="320" rx="22" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="6"/>
+    <rect x="26" y="26" width="448" height="268" rx="8" fill="#ffffff" fill-opacity="0.06"/>
+    <path d="M -60 320 L 560 320 L 610 400 L -110 400 Z" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="6" stroke-linejoin="round"/>
+    <rect x="150" y="350" width="200" height="10" rx="5" fill="#ffffff" fill-opacity="0.3"/>
+  </g>
+</svg>

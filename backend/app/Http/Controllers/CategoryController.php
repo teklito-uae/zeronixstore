@@ -26,6 +26,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
+            'microless_category_id' => 'nullable|string|max:50',
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
@@ -46,6 +47,7 @@ class CategoryController extends Controller
             'description' => 'nullable|string',
             'image' => 'nullable|image|max:2048',
             'parent_id' => 'nullable|exists:categories,id',
+            'microless_category_id' => 'nullable|string|max:50',
         ]);
 
         if (isset($validated['name'])) {

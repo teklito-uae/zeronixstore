@@ -34,9 +34,25 @@ class DownloadProductImagesJob implements ShouldQueue
     public function handle(): void
     {
         $localPaths = [];
-        $productNameSlug = Str::slug($this->product->name, '_');
-        
-        foreach ($this->imageUrls as $index => $url) {
+
+        // Keep generated filenames sane regardless of how long the scraped
+        // product title is — full titles here can run past 150 characters,
+        // which previously produced a path Laravel could `put()` to disk
+        // fine but that silently failed to insert into product_images.path
+        // (varchar(255)) once the "/storage/products/..." prefix and the
+        // "_zeronix_{id}_{index}.{ext}" suffix were added on top.
+        $nameWords = explode(' ', $this->product->name);
+        $slugBase = count($nameWords) > 8 ? implode(' ', array_slice($nameWords, 0, 8)) : $this->product->name;
+        $productNameSlug = Str::slug($slugBase, '_');
+
+        // Cap the gallery: 5-6 images is plenty for a listing, and every
+        // extra one is a full HTTP fetch. Applied here (not at the scrape
+        // site) so both scraper paths that feed this job — the Microless
+        // deep-scrape and the generic URL crawler — get the same limit for
+        // free instead of each having to remember to cap on their own.
+        $imageUrls = array_slice($this->imageUrls, 0, 6);
+
+        foreach ($imageUrls as $index => $url) {
             try {
                 // Fetch image (disabling verify for scraped images to avoid SSL issues)
                 $response = Http::withOptions(['verify' => false])->timeout(30)->get($url);

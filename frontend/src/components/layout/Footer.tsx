@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone } from "lucide-react";
+import { ArrowUp, BadgeCheck, CreditCard, Mail, MapPin, Phone, ShieldCheck, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Separator } from "@/components/ui/separator";
 
@@ -39,11 +39,33 @@ const footerColumns = [
   },
 ];
 
+const trustBadges = [
+  { icon: Truck, label: "Fast UAE delivery" },
+  { icon: ShieldCheck, label: "Secure checkout" },
+  { icon: BadgeCheck, label: "100% authentic parts" },
+  { icon: CreditCard, label: "Card, Tabby & COD" },
+];
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
 export function Footer() {
   return (
     <footer className="dark border-t border-border bg-background pb-16 text-foreground lg:pb-0">
-      <div className="mx-auto max-w-7xl px-4 py-12">
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-6">
+      <div className="mx-auto max-w-7xl px-4">
+        <div className="grid grid-cols-2 gap-4 border-b border-border py-6 sm:grid-cols-4">
+          {trustBadges.map(({ icon: Icon, label }) => (
+            <div key={label} className="flex items-center gap-2.5">
+              <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-accent text-primary">
+                <Icon className="size-4" strokeWidth={1.75} />
+              </span>
+              <span className="text-xs font-medium text-muted-foreground sm:text-sm">{label}</span>
+            </div>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 gap-8 py-12 sm:grid-cols-3 lg:grid-cols-6">
           <div className="col-span-2 flex flex-col items-start gap-4 lg:col-span-2">
             <img src="/zeronix-logo.webp" alt="Zeronix" className="h-6 w-auto self-start rounded bg-white p-1" />
             <p className="max-w-xs text-sm text-muted-foreground">
@@ -70,7 +92,7 @@ export function Footer() {
                   <li key={link.href}>
                     <Link
                       to={link.href}
-                      className="text-sm text-muted-foreground hover:text-foreground"
+                      className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                     >
                       {link.label}
                     </Link>
@@ -81,23 +103,33 @@ export function Footer() {
           ))}
         </div>
 
-        <Separator className="my-8" />
+        <Separator />
 
-        <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="flex flex-col items-center justify-between gap-4 py-6 sm:flex-row">
           <p className="text-xs text-muted-foreground">
             &copy; {new Date().getFullYear()} Zeronix UAE. All rights reserved.
           </p>
-          <div className="flex items-center gap-2">
-            {["Facebook", "Instagram", "X"].map((label) => (
-              <a
-                key={label}
-                href="#"
-                aria-label={label}
-                className="flex size-8 items-center justify-center rounded-full border border-border text-[11px] font-semibold text-muted-foreground hover:border-primary/40 hover:text-foreground"
-              >
-                {label[0]}
-              </a>
-            ))}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              {["Facebook", "Instagram", "X"].map((label) => (
+                <a
+                  key={label}
+                  href="#"
+                  aria-label={label}
+                  className="flex size-8 items-center justify-center rounded-full bg-muted text-[11px] font-semibold text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground"
+                >
+                  {label[0]}
+                </a>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={scrollToTop}
+              aria-label="Back to top"
+              className="flex size-8 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-primary/40 hover:text-foreground"
+            >
+              <ArrowUp className="size-4" />
+            </button>
           </div>
         </div>
       </div>

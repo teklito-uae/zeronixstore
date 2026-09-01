@@ -1,8 +1,6 @@
-import { ArrowUpRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getCategoryAccent } from "@/lib/category-accents";
-import { getCategory3DIcon } from "@/lib/category-3d-icons";
 import { CategoryIcon } from "@/lib/category-icons";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/features/products/types";
@@ -19,50 +17,36 @@ export function CategoryStrip({ categories, loading }: CategoryStripProps) {
         <div className="mb-6 flex items-end justify-between">
           <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Shop by Category</h2>
         </div>
-      </div>
 
-      <div className="no-scrollbar mx-auto flex max-w-7xl snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-1 [mask-image:linear-gradient(to_right,black_calc(100%-28px),transparent)] sm:[mask-image:none]">
-        {loading
-          ? Array.from({ length: 5 }).map((_, i) => (
-              <Skeleton key={i} className="h-56 w-40 shrink-0 clip-notch sm:w-48" />
-            ))
-          : categories.map((cat) => {
-              const accent = getCategoryAccent(cat.slug);
-              const icon3d = getCategory3DIcon(cat.slug);
-              return (
-                <Link
-                  key={cat.id}
-                  to={`/category/${cat.slug}`}
-                  className={cn(
-                    "group relative flex h-56 w-40 shrink-0 snap-start flex-col justify-between p-4 clip-notch ring-1 ring-inset transition-transform hover:-translate-y-1 active:scale-[0.97] sm:w-48",
-                    accent.bg,
-                    accent.ring,
-                  )}
-                >
-                  <ArrowUpRight
-                    className={cn(
-                      "size-4 self-end opacity-0 transition-opacity group-hover:opacity-100",
-                      accent.fg,
-                    )}
-                  />
-                  {icon3d ? (
-                    <img
-                      src={icon3d}
-                      alt=""
-                      className="size-16 self-center object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-110"
-                    />
-                  ) : (
-                    <CategoryIcon slug={cat.slug} className={cn("size-9", accent.fg)} strokeWidth={1.5} />
-                  )}
-                  <div>
-                    <span className="block text-sm font-semibold text-foreground">{cat.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {cat.total_products_count} products
+        <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [mask-image:linear-gradient(to_right,black_calc(100%-28px),transparent)] sm:mx-0 sm:grid sm:snap-none sm:grid-cols-4 sm:gap-3 sm:overflow-visible sm:px-0 sm:[mask-image:none] md:grid-cols-6 lg:grid-cols-12">
+          {loading
+            ? Array.from({ length: 12 }).map((_, i) => (
+                <Skeleton key={i} className="h-24 w-24 shrink-0 rounded-xl sm:h-28 sm:w-auto" />
+              ))
+            : categories.map((cat) => {
+                const accent = getCategoryAccent(cat.slug);
+                return (
+                  <Link
+                    key={cat.id}
+                    to={`/category/${cat.slug}`}
+                    className="group flex w-24 shrink-0 snap-start flex-col items-center gap-2 rounded-xl border border-transparent p-3 text-center transition-colors hover:border-border hover:bg-muted/60 sm:w-auto"
+                  >
+                    <span
+                      className={cn(
+                        "flex size-11 shrink-0 items-center justify-center rounded-full ring-1 ring-inset transition-transform duration-200 group-hover:scale-110",
+                        accent.bg,
+                        accent.ring,
+                      )}
+                    >
+                      <CategoryIcon slug={cat.slug} className={cn("size-5", accent.fg)} strokeWidth={1.75} />
                     </span>
-                  </div>
-                </Link>
-              );
-            })}
+                    <span className="line-clamp-2 text-xs font-medium leading-tight text-foreground">
+                      {cat.name}
+                    </span>
+                  </Link>
+                );
+              })}
+        </div>
       </div>
     </section>
   );

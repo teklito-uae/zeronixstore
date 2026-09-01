@@ -79,11 +79,13 @@ class ProcessMicrolessProductJob implements ShouldQueue
         
         $name = $this->data['title'] ?? $this->data['name'] ?? 'Microless Product';
         $sku = $this->data['sku'] ?? $this->data['SKU'] ?? $this->data['model_number'] ?? null;
+        // Microless's product-list/API payloads only carry a numeric brand_id
+        // (their internal id, meaningless in our brands table), never a name —
+        // brand_name/brand only shows up when the caller supplied it directly.
+        // Resolved for real below, once the deep scrape has had a chance to
+        // find a name in the spec table.
         $brand = $this->data['brand_name'] ?? $this->data['brand'] ?? null;
-        
-        // Create or find Brand record
-        $brandModel = \App\Models\Brand::findOrCreateByName($brand);
-        
+
         // DEEP SCRAPE START
         $galleryImages = [];
         $description = 'Imported from Microless API';
@@ -98,6 +100,22 @@ class ProcessMicrolessProductJob implements ShouldQueue
             ]));
 
             $crawler = $browser->request('GET', $sourceUrl);
+
+            // 0. Brand (from the page's own analytics payload, not a CSS
+            // guess). Every Microless product page embeds a
+            // `Microless.products = [{..., "item_brand": "Lenovo", ...}]`
+            // JS array for GTM/analytics tracking — far more reliable than
+            // any single spec-table row, which isn't present on every page.
+            if (!$brand) {
+                $rawHtml = $browser->getResponse()->getContent();
+                if (preg_match('/Microless\.products\s*=\s*(\[.*?\]);/s', $rawHtml, $matches)) {
+                    $analyticsProducts = json_decode($matches[1], true);
+                    $itemBrand = $analyticsProducts[0]['item_brand'] ?? null;
+                    if (is_string($itemBrand) && trim($itemBrand) !== '') {
+                        $brand = trim($itemBrand);
+                    }
+                }
+            }
 
             // 1. Refined Title
             if ($crawler->filter('h1.product-title-h1 span')->count() > 0) {
@@ -161,6 +179,17 @@ class ProcessMicrolessProductJob implements ShouldQueue
                 'model' => $model ?? null
             ];
 
+            // Fall back to the scraped spec table for a brand name when the
+            // caller didn't supply one (see note above `$brand` assignment).
+            if (!$brand) {
+                foreach ($fullSpecs as $specKey => $specVal) {
+                    if (stripos($specKey, 'brand') !== false && trim($specVal) !== '') {
+                        $brand = trim($specVal);
+                        break;
+                    }
+                }
+            }
+
             $log->update([
                 'message' => 'Scraped product details and ' . count($galleryImages) . ' images.',
                 'status' => 'downloading'
@@ -177,6 +206,10 @@ class ProcessMicrolessProductJob implements ShouldQueue
         if (empty($galleryImages) && $coverImage) {
             $galleryImages = [$coverImage];
         }
+
+        // Resolve (and create if missing) the Brand record now that the deep
+        // scrape above has had a chance to fill in $brand.
+        $brandModel = \App\Models\Brand::findOrCreateByName($brand);
 
         try {
             // Optimized Slug Generation (SEO Friendly)

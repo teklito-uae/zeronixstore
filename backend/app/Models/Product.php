@@ -18,7 +18,8 @@ class Product extends Model
         'price', 'sale_price', 'cpu', 'gpu', 'ram', 'storage',
         'specs', 'images', 'featured', 'status',
         'source_url', 'is_imported', 'import_metadata',
-        'badge', 'badge_color'
+        'badge', 'badge_color',
+        'meta_title', 'meta_description', 'search_keywords',
     ];
     
     protected $hidden = ['source_url', 'import_metadata'];

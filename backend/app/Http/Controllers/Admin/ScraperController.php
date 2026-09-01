@@ -40,7 +40,7 @@ class ScraperController extends Controller
 
     public function getStatus($id)
     {
-        $job = ImportJob::with(['logs' => function($query) {
+        $job = ImportJob::with(['localCategory:id,name', 'logs' => function($query) {
             $query->orderBy('created_at', 'desc')->take(20);
         }])->findOrFail($id);
         

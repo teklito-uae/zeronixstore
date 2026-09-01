@@ -4,7 +4,6 @@ import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import { mockBrands, mockCategories } from "@/features/products/mock-data";
 import { getCategoryAccent } from "@/lib/category-accents";
-import { getCategory3DIcon } from "@/lib/category-3d-icons";
 import { CategoryIcon } from "@/lib/category-icons";
 import { cn } from "@/lib/utils";
 
@@ -32,7 +31,6 @@ export function MegaMenu() {
 
   const activeCategory = mockCategories.find((c) => c.slug === openSlug);
   const accent = activeCategory ? getCategoryAccent(activeCategory.slug) : null;
-  const activeIcon3d = activeCategory ? getCategory3DIcon(activeCategory.slug) : null;
 
   return (
     <nav aria-label="Product categories" className="hidden lg:block" onMouseLeave={scheduleClose}>
@@ -96,15 +94,11 @@ export function MegaMenu() {
                           accent?.bg,
                         )}
                       >
-                        {activeIcon3d ? (
-                          <img src={activeIcon3d} alt="" className="size-6 object-contain" />
-                        ) : (
-                          <CategoryIcon
-                            slug={activeCategory.slug}
-                            className={cn("size-4.5", accent?.fg)}
-                            strokeWidth={1.75}
-                          />
-                        )}
+                        <CategoryIcon
+                          slug={child.slug}
+                          className={cn("size-4.5", accent?.fg)}
+                          strokeWidth={1.75}
+                        />
                       </span>
                       <span>
                         <span className="block text-sm font-medium text-foreground">

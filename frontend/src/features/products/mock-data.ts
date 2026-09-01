@@ -111,6 +111,25 @@ function category(slug: string): Category {
   throw new Error(`Unknown mock category: ${slug}`);
 }
 
+// Curated 12-up list for the homepage "Shop by Category" strip — a flatter mix of
+// top-level and popular subcategories than the 5-item nav taxonomy above, since the
+// homepage rewards more entry points. Reuses the same underlying category records
+// (and real product counts) rather than inventing separate data.
+export const homeCategories: Category[] = [
+  "laptops",
+  "desktops",
+  "graphics-cards",
+  "processors",
+  "monitors",
+  "storage",
+  "accessories",
+  "keyboards-mice",
+  "headsets",
+  "gaming-laptops",
+  "gaming-pcs",
+  "webcams-streaming",
+].map(category);
+
 const TOMORROW = "Delivery tomorrow";
 const ONE_YEAR = "1 Year warranty";
 

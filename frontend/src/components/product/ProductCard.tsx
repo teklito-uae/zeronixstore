@@ -44,7 +44,7 @@ export function ProductCard({ product }: ProductCardProps) {
         {product.badge && (
           <Badge
             className={cn(
-              "absolute left-2 top-2 border-none px-2 py-0.5 text-[11px] font-medium",
+              "absolute left-1.5 top-1.5 border-none px-1.5 py-0.5 text-[10px] font-medium sm:left-2 sm:top-2 sm:px-2 sm:text-[11px]",
               product.badge_color && badgeVariantByColor[product.badge_color],
             )}
           >
@@ -55,38 +55,38 @@ export function ProductCard({ product }: ProductCardProps) {
           type="button"
           aria-label="Add to wishlist"
           onClick={(e) => e.preventDefault()}
-          className="absolute right-2 top-2 flex size-8 items-center justify-center rounded-full bg-background/80 text-foreground/70 backdrop-blur transition-colors hover:text-primary"
+          className="absolute right-1.5 top-1.5 flex size-6 items-center justify-center rounded-full bg-background/80 text-foreground/70 backdrop-blur transition-colors hover:text-primary sm:right-2 sm:top-2 sm:size-8"
         >
-          <Heart className="size-4" />
+          <Heart className="size-3 sm:size-4" />
         </button>
         <CategoryIcon
           slug={product.category.slug}
-          className={cn("relative size-16", accent.fg, "opacity-70")}
+          className={cn("relative size-10 sm:size-16", accent.fg, "opacity-70")}
           strokeWidth={1.25}
         />
       </div>
 
-      <div className="flex flex-1 flex-col gap-1.5 p-3">
+      <div className="flex flex-1 flex-col gap-1 p-2 sm:gap-1.5 sm:p-3">
         <div className="flex items-center justify-between gap-2">
           {product.brand && (
-            <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+            <span className="truncate text-[10px] font-medium uppercase tracking-wide text-muted-foreground sm:text-xs">
               {product.brand.name}
             </span>
           )}
           {product.rating && (
-            <span className="flex shrink-0 items-center gap-0.5 text-xs text-muted-foreground">
+            <span className="hidden shrink-0 items-center gap-0.5 text-xs text-muted-foreground sm:flex">
               <Star className="size-3 fill-amber-400 text-amber-400" />
               {product.rating.average.toFixed(1)}
               <span className="text-muted-foreground/70">({product.rating.count})</span>
             </span>
           )}
         </div>
-        <h3 className="line-clamp-2 text-sm font-medium leading-snug text-foreground">
+        <h3 className="line-clamp-2 text-xs font-medium leading-snug text-foreground sm:text-sm">
           {product.name}
         </h3>
 
         {specChips.length > 0 && (
-          <div className="flex flex-wrap gap-1">
+          <div className="hidden flex-wrap gap-1 sm:flex">
             {specChips.map((spec) => (
               <span
                 key={spec}
@@ -99,20 +99,20 @@ export function ProductCard({ product }: ProductCardProps) {
           </div>
         )}
 
-        <div className="mt-auto flex flex-col gap-2 pt-2">
+        <div className="mt-auto flex flex-col gap-1.5 pt-1.5 sm:gap-2 sm:pt-2">
           {product.deliveryEstimate && (
-            <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+            <span className="hidden items-center gap-1 text-[11px] text-muted-foreground sm:flex">
               <Truck className="size-3" />
               {product.deliveryEstimate}
             </span>
           )}
-          <div className="flex items-end justify-between">
-            <div className="flex flex-col">
-              <span className="text-base font-semibold text-foreground">
+          <div className="flex items-end justify-between gap-1">
+            <div className="flex min-w-0 flex-col">
+              <span className="truncate text-sm font-semibold text-foreground sm:text-base">
                 {formatPrice(onSale ? product.sale_price! : product.price)}
               </span>
               {onSale && (
-                <span className="text-xs text-muted-foreground line-through">
+                <span className="truncate text-[11px] text-muted-foreground line-through sm:text-xs">
                   {formatPrice(product.price)}
                 </span>
               )}
@@ -121,10 +121,10 @@ export function ProductCard({ product }: ProductCardProps) {
               size="icon"
               variant="secondary"
               aria-label="Add to cart"
-              className="size-9 shrink-0"
+              className="size-7 shrink-0 sm:size-9"
               onClick={(e) => e.preventDefault()}
             >
-              <ShoppingCart className="size-4" />
+              <ShoppingCart className="size-3.5 sm:size-4" />
             </Button>
           </div>
         </div>
