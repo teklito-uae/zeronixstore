@@ -1,4 +1,4 @@
-import { BrandStrip } from "@/components/home/BrandStrip";
+import { BrandsShowcase } from "@/components/home/BrandsShowcase";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { FAQSection } from "@/components/home/FAQSection";
 import { HeroBanner } from "@/components/home/HeroBanner";
@@ -10,7 +10,7 @@ import { useHomeCatalog } from "@/features/products/useHomeCatalog";
 import { useLazyProducts } from "@/features/products/useLazyProducts";
 
 export default function Home() {
-  const { loading, homeCategories, brands } = useHomeCatalog();
+  const { loading, homeCategories } = useHomeCatalog();
 
   const deals = useLazyProducts({ perPage: 30, filter: (p) => p.sale_price !== null, limit: 10 });
   const laptops = useLazyProducts({ category: "laptops", perPage: 16 });
@@ -47,7 +47,7 @@ export default function Home() {
         loading={monitors.loading}
         sectionRef={monitors.ref}
       />
-      <BrandStrip brands={brands} />
+      <BrandsShowcase />
       <StatsBar />
       <ProductCarousel
         title="Graphics Cards & Components"

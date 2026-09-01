@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { Search as SearchIcon, SearchX, SlidersHorizontal } from "lucide-react";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
@@ -19,6 +19,10 @@ export default function Search() {
   const [inputValue, setInputValue] = useState(query);
 
   const listing = useProductListing({ search: query, perPage: 24 });
+
+  useEffect(() => {
+    setInputValue(query);
+  }, [query]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -41,6 +45,17 @@ export default function Search() {
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
+
+      <form role="search" onSubmit={handleSubmit} className="relative mb-6 max-w-xl md:hidden">
+        <SearchIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          type="search"
+          placeholder="Search laptops, GPUs, monitors..."
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          className="pl-9"
+        />
+      </form>
 
       <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
         <div>

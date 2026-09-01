@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchBrands, fetchCategories } from "./api";
-import type { Brand, Category } from "./types";
+import { fetchCategories } from "./api";
+import type { Category } from "./types";
 
 // Homepage category strip: the full taxonomy from ZeronixCatalogSeeder,
 // resolved against whatever the API actually returns — categories that
@@ -45,40 +45,36 @@ function flattenCategories(tree: Category[]): Map<string, Category> {
 interface HomeEssentials {
   loading: boolean;
   homeCategories: Category[];
-  brands: Brand[];
 }
 
 /**
- * The two requests small/fast enough (and needed high enough on the page)
- * to fetch eagerly on mount. Per-carousel product data is fetched lazily
+ * The one request small/fast enough (and needed high enough on the page) to
+ * fetch eagerly on mount. Per-carousel product data is fetched lazily
  * instead — see useLazyProducts — so the homepage doesn't fire a burst of
- * 6+ parallel requests before the user has scrolled anywhere.
+ * requests before the user has scrolled anywhere.
  */
 export function useHomeCatalog(): HomeEssentials {
   const [loading, setLoading] = useState(true);
   const [homeCategories, setHomeCategories] = useState<Category[]>([]);
-  const [brands, setBrands] = useState<Brand[]>([]);
 
   useEffect(() => {
     let cancelled = false;
 
-    Promise.all([
-      fetchCategories().catch(() => [] as Category[]),
-      fetchBrands().catch(() => [] as Brand[]),
-    ]).then(([tree, brandList]) => {
-      if (cancelled) return;
-      const flat = flattenCategories(tree);
-      setHomeCategories(
-        HOME_CATEGORY_SLUGS.map((slug) => flat.get(slug)).filter((c): c is Category => Boolean(c)),
-      );
-      setBrands(brandList);
-      setLoading(false);
-    });
+    fetchCategories()
+      .catch(() => [] as Category[])
+      .then((tree) => {
+        if (cancelled) return;
+        const flat = flattenCategories(tree);
+        setHomeCategories(
+          HOME_CATEGORY_SLUGS.map((slug) => flat.get(slug)).filter((c): c is Category => Boolean(c)),
+        );
+        setLoading(false);
+      });
 
     return () => {
       cancelled = true;
     };
   }, []);
 
-  return { loading, homeCategories, brands };
+  return { loading, homeCategories };
 }
