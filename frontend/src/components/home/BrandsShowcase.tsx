@@ -50,12 +50,12 @@ export function BrandsShowcase() {
               key={b.slug}
               to={`/brand/${b.slug}`}
               aria-label={b.name}
-              className="flex items-center justify-center p-2 opacity-90 transition-opacity hover:opacity-100"
+              className="flex h-12 items-center justify-center p-2 opacity-90 transition-opacity hover:opacity-100 sm:h-14"
             >
               <img
                 src={`/brands/${b.slug}.svg`}
                 alt={b.name}
-                className="h-7 w-auto max-w-[110px] object-contain sm:h-8"
+                className="h-full max-h-9 w-auto max-w-[140px] object-contain sm:max-h-11"
                 loading="lazy"
               />
             </Link>
