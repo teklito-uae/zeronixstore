@@ -32,9 +32,9 @@ class ZeronixCatalogSeeder extends Seeder
                 'meta_description' => 'Shop gaming, business and 2-in-1 laptops in Dubai, Abu Dhabi & across the UAE. Authentic brands, 1-year warranty, fast delivery.',
                 'search_keywords' => 'laptop dubai, laptop uae, gaming laptop dubai, business laptop uae, buy laptop online uae, cheap laptop dubai',
                 'children' => [
-                    'Gaming Laptops' => ['gaming-laptops', 'Gaming Laptops UAE — RTX 40-Series | Zeronix', 'RTX-powered gaming laptops from ASUS ROG, MSI and Lenovo Legion, delivered across the UAE.', 'gaming laptop dubai, rtx 4070 laptop uae, asus rog laptop, msi gaming laptop uae, lenovo legion dubai'],
-                    'Business Laptops' => ['business-laptops', 'Business Laptops UAE | Zeronix', 'Lightweight, reliable business and productivity laptops for professionals across the UAE.', 'business laptop dubai, ultrabook uae, dell xps uae, thinkpad dubai, office laptop uae'],
-                    '2-in-1 & Touch' => ['2-in-1-laptops', '2-in-1 & Touchscreen Laptops UAE | Zeronix', 'Convertible and touchscreen 2-in-1 laptops for work and play, shipped across the UAE.', '2 in 1 laptop uae, touchscreen laptop dubai, convertible laptop uae'],
+                    'Gaming Laptops' => ['gaming-laptops', 'Gaming Laptops UAE — RTX 40-Series | Zeronix', 'RTX-powered gaming laptops from ASUS ROG, MSI and Lenovo Legion, delivered across the UAE.', 'gaming laptop dubai, rtx 4070 laptop uae, asus rog laptop, msi gaming laptop uae, lenovo legion dubai', 'https://images.unsplash.com/photo-1640955014216-75201056c829?w=800&q=80'],
+                    'Business Laptops' => ['business-laptops', 'Business Laptops UAE | Zeronix', 'Lightweight, reliable business and productivity laptops for professionals across the UAE.', 'business laptop dubai, ultrabook uae, dell xps uae, thinkpad dubai, office laptop uae', 'https://images.unsplash.com/photo-1602016736566-7ed6a58894bd?w=800&q=80'],
+                    '2-in-1 & Touch' => ['2-in-1-laptops', '2-in-1 & Touchscreen Laptops UAE | Zeronix', 'Convertible and touchscreen 2-in-1 laptops for work and play, shipped across the UAE.', '2 in 1 laptop uae, touchscreen laptop dubai, convertible laptop uae', 'https://images.unsplash.com/photo-1593642532973-d31b6557fa68?w=800&q=80'],
                 ],
             ],
             'Desktops' => [
@@ -45,9 +45,9 @@ class ZeronixCatalogSeeder extends Seeder
                 'meta_description' => 'Prebuilt gaming desktops, mini PCs and custom builds delivered across Dubai and the UAE.',
                 'search_keywords' => 'desktop pc dubai, gaming pc uae, custom pc build dubai, prebuilt desktop uae, mini pc dubai',
                 'children' => [
-                    'Gaming PCs' => ['gaming-pcs', 'Gaming PCs UAE — Prebuilt & Custom | Zeronix', 'Prebuilt and custom gaming desktops with the latest NVIDIA GPUs, built and shipped in the UAE.', 'gaming pc dubai, gaming desktop uae, custom gaming pc dubai, rtx desktop uae'],
-                    'Prebuilt Desktops' => ['prebuilt-desktops', 'Prebuilt Desktop PCs UAE | Zeronix', 'Ready-to-ship prebuilt desktop towers for home and office use across the UAE.', 'prebuilt pc dubai, desktop computer uae, office pc dubai'],
-                    'Mini PCs' => ['mini-pcs', 'Mini PCs UAE | Zeronix', 'Compact mini PCs for home, office and media use, delivered across the UAE.', 'mini pc dubai, small form factor pc uae, compact desktop uae'],
+                    'Gaming PCs' => ['gaming-pcs', 'Gaming PCs UAE — Prebuilt & Custom | Zeronix', 'Prebuilt and custom gaming desktops with the latest NVIDIA GPUs, built and shipped in the UAE.', 'gaming pc dubai, gaming desktop uae, custom gaming pc dubai, rtx desktop uae', 'https://images.unsplash.com/photo-1626218174358-7769486c4b79?w=800&q=80'],
+                    'Prebuilt Desktops' => ['prebuilt-desktops', 'Prebuilt Desktop PCs UAE | Zeronix', 'Ready-to-ship prebuilt desktop towers for home and office use across the UAE.', 'prebuilt pc dubai, desktop computer uae, office pc dubai', 'https://images.unsplash.com/photo-1660855551740-4474188debdb?w=800&q=80'],
+                    'Mini PCs' => ['mini-pcs', 'Mini PCs UAE | Zeronix', 'Compact mini PCs for home, office and media use, delivered across the UAE.', 'mini pc dubai, small form factor pc uae, compact desktop uae', 'https://images.unsplash.com/photo-1758857087633-938527980d5e?w=800&q=80'],
                 ],
             ],
             'Components' => [
@@ -73,9 +73,9 @@ class ZeronixCatalogSeeder extends Seeder
                 'meta_description' => 'Gaming, 4K/ultrawide and office monitors from ASUS, Dell and more, delivered across the UAE.',
                 'search_keywords' => '4k monitor uae, gaming monitor dubai, ultrawide monitor uae, dell monitor dubai, office monitor uae',
                 'children' => [
-                    'Gaming Monitors' => ['gaming-monitors', 'Gaming Monitors UAE — High Refresh Rate | Zeronix', 'High refresh rate gaming monitors for competitive play, shipped across the UAE.', 'gaming monitor dubai, 144hz monitor uae, 240hz monitor dubai'],
-                    '4K & Ultrawide' => ['4k-ultrawide-monitors', '4K & Ultrawide Monitors UAE | Zeronix', '4K and ultrawide monitors for gaming, editing and productivity across the UAE.', '4k monitor dubai, ultrawide monitor uae, curved monitor dubai'],
-                    'Office Monitors' => ['office-monitors', 'Office Monitors UAE | Zeronix', 'Reliable office and productivity monitors, delivered across the UAE.', 'office monitor dubai, budget monitor uae, dell monitor uae'],
+                    'Gaming Monitors' => ['gaming-monitors', 'Gaming Monitors UAE — High Refresh Rate | Zeronix', 'High refresh rate gaming monitors for competitive play, shipped across the UAE.', 'gaming monitor dubai, 144hz monitor uae, 240hz monitor dubai', 'https://images.unsplash.com/photo-1626968361222-291e74711449?w=800&q=80'],
+                    '4K & Ultrawide' => ['4k-ultrawide-monitors', '4K & Ultrawide Monitors UAE | Zeronix', '4K and ultrawide monitors for gaming, editing and productivity across the UAE.', '4k monitor dubai, ultrawide monitor uae, curved monitor dubai', 'https://images.unsplash.com/photo-1585792180666-f7347c490ee2?w=800&q=80'],
+                    'Office Monitors' => ['office-monitors', 'Office Monitors UAE | Zeronix', 'Reliable office and productivity monitors, delivered across the UAE.', 'office monitor dubai, budget monitor uae, dell monitor uae', 'https://images.unsplash.com/photo-1510519138101-570d1dca3d66?w=800&q=80'],
                 ],
             ],
             'Accessories' => [
@@ -86,9 +86,9 @@ class ZeronixCatalogSeeder extends Seeder
                 'meta_description' => 'Gaming keyboards, mice, headsets and webcams from Razer, Logitech and more, shipped across the UAE.',
                 'search_keywords' => 'mechanical keyboard uae, gaming mouse dubai, gaming headset uae, razer dubai, logitech uae',
                 'children' => [
-                    'Keyboards & Mice' => ['keyboards-mice', 'Keyboards & Mice UAE | Zeronix', 'Mechanical keyboards and gaming mice from Razer, Logitech and Corsair, delivered across the UAE.', 'mechanical keyboard dubai, gaming mouse uae, wireless mouse dubai'],
-                    'Headsets' => ['headsets', 'Gaming Headsets UAE | Zeronix', 'Gaming and wireless headsets for immersive sound, shipped across the UAE.', 'gaming headset dubai, wireless headset uae, razer headset dubai'],
-                    'Webcams & Streaming' => ['webcams-streaming', 'Webcams & Streaming Gear UAE | Zeronix', 'Webcams, microphones and streaming gear for content creators in the UAE.', 'webcam dubai, streaming gear uae, microphone dubai'],
+                    'Keyboards & Mice' => ['keyboards-mice', 'Keyboards & Mice UAE | Zeronix', 'Mechanical keyboards and gaming mice from Razer, Logitech and Corsair, delivered across the UAE.', 'mechanical keyboard dubai, gaming mouse uae, wireless mouse dubai', 'https://images.unsplash.com/photo-1595044426077-d36d9236d54a?w=800&q=80'],
+                    'Headsets' => ['headsets', 'Gaming Headsets UAE | Zeronix', 'Gaming and wireless headsets for immersive sound, shipped across the UAE.', 'gaming headset dubai, wireless headset uae, razer headset dubai', 'https://images.unsplash.com/photo-1560419015-7c427e8ae5ba?w=800&q=80'],
+                    'Webcams & Streaming' => ['webcams-streaming', 'Webcams & Streaming Gear UAE | Zeronix', 'Webcams, microphones and streaming gear for content creators in the UAE.', 'webcam dubai, streaming gear uae, microphone dubai', 'https://images.unsplash.com/photo-1623949556303-b0d17d198863?w=800&q=80'],
                 ],
             ],
         ];
@@ -107,16 +107,20 @@ class ZeronixCatalogSeeder extends Seeder
                 ],
             );
 
-            foreach ($def['children'] as $childName => [$childSlug, $metaTitle, $metaDescription, $keywords]) {
+            foreach ($def['children'] as $childName => $child) {
+                [$childSlug, $metaTitle, $metaDescription, $keywords] = $child;
+                $childImage = $child[4] ?? null;
+
                 Category::updateOrCreate(
                     ['slug' => $childSlug],
-                    [
+                    array_filter([
                         'name' => $childName,
                         'parent_id' => $parent->id,
                         'meta_title' => $metaTitle,
                         'meta_description' => $metaDescription,
                         'search_keywords' => $keywords,
-                    ],
+                        'image' => $childImage,
+                    ], fn ($value) => $value !== null),
                 );
             }
         }
