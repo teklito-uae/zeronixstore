@@ -1,4 +1,5 @@
 import {
+  Armchair,
   CircuitBoard,
   Computer,
   Cpu,
@@ -14,6 +15,8 @@ import {
   Monitor,
   Mouse,
   Package,
+  Printer,
+  Router,
   Video,
 } from "lucide-react";
 
@@ -40,6 +43,15 @@ const iconsBySlug: Record<string, typeof Package> = {
   "keyboards-mice": Mouse,
   headsets: Headphones,
   "webcams-streaming": Video,
+  networking: Router,
+  routers: Router,
+  "network-adapters": Router,
+  "printers-scanners": Printer,
+  "laser-printers": Printer,
+  "all-in-one-printers": Printer,
+  "gaming-chairs-desks": Armchair,
+  "gaming-chairs": Armchair,
+  "gaming-desks": Armchair,
 };
 
 interface CategoryIconProps extends LucideProps {
