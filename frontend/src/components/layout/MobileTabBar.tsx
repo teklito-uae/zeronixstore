@@ -2,11 +2,13 @@ import { Heart, LayoutGrid, House, ShoppingCart, User } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { CategoriesSheet } from "@/components/layout/CategoriesSheet";
 import { cn } from "@/lib/utils";
-
-const cartCount = 2;
+import { useCart } from "@/features/cart/CartContext";
+import { useWishlist } from "@/features/wishlist/WishlistContext";
 
 export function MobileTabBar() {
   const { pathname } = useLocation();
+  const { totalCount: cartCount } = useCart();
+  const { items: wishlistItems } = useWishlist();
 
   const linkClass = (active: boolean) =>
     cn(
@@ -34,8 +36,15 @@ export function MobileTabBar() {
           }
         />
 
-        <Link to="/wishlist" className={linkClass(pathname === "/wishlist")}>
-          <Heart className="size-5" />
+        <Link to="/wishlist" className={cn(linkClass(pathname === "/wishlist"), "relative")}>
+          <span className="relative">
+            <Heart className="size-5" />
+            {wishlistItems.length > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 flex size-3.5 items-center justify-center rounded-full bg-primary text-[9px] font-semibold text-primary-foreground">
+                {wishlistItems.length}
+              </span>
+            )}
+          </span>
           Wishlist
         </Link>
 

@@ -48,6 +48,8 @@ export interface Product {
   brand: Brand | null;
   price: string;
   sale_price: string | null;
+  meta_title?: string | null;
+  meta_description?: string | null;
   cpu: string | null;
   gpu: string | null;
   ram: string | null;

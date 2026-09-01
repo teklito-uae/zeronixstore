@@ -63,3 +63,17 @@ export async function fetchProducts(query: ProductsQuery = {}): Promise<Paginate
     meta: json.meta,
   };
 }
+
+export class ProductNotFoundError extends Error {}
+
+// show() doesn't filter by status server-side either (see fetchProducts above),
+// so a draft product's slug still 200s here — guard it client-side rather than
+// trusting the API to have already hidden it.
+export async function fetchProduct(slug: string): Promise<Product> {
+  const res = await fetch(`${API_BASE_URL}/products/${slug}`);
+  if (res.status === 404) throw new ProductNotFoundError(`Product not found: ${slug}`);
+  if (!res.ok) throw new Error(`Failed to load product (${res.status})`);
+  const raw: RawProduct = await res.json();
+  if (raw.status !== "active") throw new ProductNotFoundError(`Product not published: ${slug}`);
+  return toProduct(raw);
+}

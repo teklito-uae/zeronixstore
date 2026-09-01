@@ -4,10 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MegaMenu } from "@/components/layout/MegaMenu";
 import { MobileNav } from "@/components/layout/MobileNav";
-
-const cartCount = 2;
+import { useCart } from "@/features/cart/CartContext";
+import { useWishlist } from "@/features/wishlist/WishlistContext";
 
 export function Header() {
+  const { totalCount: cartCount } = useCart();
+  const { items: wishlistItems } = useWishlist();
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4">
@@ -38,9 +41,14 @@ export function Header() {
               <Search className="size-5" />
             </Link>
           </Button>
-          <Button variant="ghost" size="icon" aria-label="Wishlist" className="hidden lg:inline-flex" asChild>
+          <Button variant="ghost" size="icon" aria-label="Wishlist" className="relative hidden lg:inline-flex" asChild>
             <Link to="/wishlist">
               <Heart className="size-5" />
+              {wishlistItems.length > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-semibold text-primary-foreground">
+                  {wishlistItems.length}
+                </span>
+              )}
             </Link>
           </Button>
           <Button variant="ghost" size="icon" aria-label="Account" className="hidden lg:inline-flex" asChild>

@@ -1,5 +1,7 @@
+import type { MouseEvent } from "react";
 import { Heart, ShoppingCart, Star, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +10,8 @@ import { CategoryIcon } from "@/lib/category-icons";
 import { formatPrice } from "@/lib/format";
 import { getSpecEntries } from "@/lib/specs";
 import { cn } from "@/lib/utils";
+import { useCart } from "@/features/cart/CartContext";
+import { useWishlist } from "@/features/wishlist/WishlistContext";
 import type { Product } from "@/features/products/types";
 
 const badgeVariantByColor: Record<string, string> = {
@@ -26,6 +30,33 @@ export function ProductCard({ product }: ProductCardProps) {
   const specChips = getSpecEntries(product)
     .slice(0, 2)
     .map(([, value]) => value);
+
+  const { addItem } = useCart();
+  const { isWishlisted, toggle } = useWishlist();
+  const wishlisted = isWishlisted(product.id);
+
+  function handleWishlist(e: MouseEvent) {
+    e.preventDefault();
+    toggle(product);
+    toast(wishlisted ? "Removed from wishlist" : "Added to wishlist", { description: product.name });
+  }
+
+  function handleAddToCart(e: MouseEvent) {
+    e.preventDefault();
+    const variant = product.variants[0] ?? null;
+    addItem({
+      productId: product.id,
+      variantId: variant?.id ?? null,
+      slug: product.slug,
+      name: product.name,
+      variantName: variant?.name ?? null,
+      image: product.primary_image_url,
+      categorySlug: product.category.slug,
+      unitPrice: Number.parseFloat(variant ? variant.price : (product.sale_price ?? product.price)),
+      maxQuantity: variant ? variant.stock : 10,
+    });
+    toast.success("Added to cart", { description: product.name });
+  }
 
   return (
     <Link
@@ -53,11 +84,14 @@ export function ProductCard({ product }: ProductCardProps) {
         )}
         <button
           type="button"
-          aria-label="Add to wishlist"
-          onClick={(e) => e.preventDefault()}
-          className="absolute right-1.5 top-1.5 flex size-6 items-center justify-center rounded-full bg-background/80 text-foreground/70 backdrop-blur transition-colors hover:text-primary sm:right-2 sm:top-2 sm:size-8"
+          aria-label="Toggle wishlist"
+          onClick={handleWishlist}
+          className={cn(
+            "absolute right-1.5 top-1.5 flex size-6 items-center justify-center rounded-full bg-background/80 backdrop-blur transition-colors hover:text-primary sm:right-2 sm:top-2 sm:size-8",
+            wishlisted ? "text-primary" : "text-foreground/70",
+          )}
         >
-          <Heart className="size-3 sm:size-4" />
+          <Heart className={cn("size-3 sm:size-4", wishlisted && "fill-primary")} />
         </button>
         <CategoryIcon
           slug={product.category.slug}
@@ -122,7 +156,7 @@ export function ProductCard({ product }: ProductCardProps) {
               variant="secondary"
               aria-label="Add to cart"
               className="size-7 shrink-0 sm:size-9"
-              onClick={(e) => e.preventDefault()}
+              onClick={handleAddToCart}
             >
               <ShoppingCart className="size-3.5 sm:size-4" />
             </Button>
