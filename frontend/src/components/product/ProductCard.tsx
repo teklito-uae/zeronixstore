@@ -1,4 +1,4 @@
-import type { MouseEvent } from "react";
+import { useState, type MouseEvent } from "react";
 import { Heart, ShoppingCart, Star, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -30,6 +30,8 @@ export function ProductCard({ product }: ProductCardProps) {
   const specChips = getSpecEntries(product)
     .slice(0, 2)
     .map(([, value]) => value);
+  const [imageFailed, setImageFailed] = useState(false);
+  const showImage = Boolean(product.primary_image_url) && !imageFailed;
 
   const { addItem } = useCart();
   const { isWishlisted, toggle } = useWishlist();
@@ -61,17 +63,33 @@ export function ProductCard({ product }: ProductCardProps) {
   return (
     <Link
       to={`/products/${product.slug}`}
-      className="group flex h-full w-full flex-col overflow-hidden rounded-lg border border-border bg-card transition-[transform,box-shadow] hover:shadow-md active:scale-[0.98]"
+      className="group flex h-full w-full flex-col overflow-hidden rounded-xl border border-border bg-card transition-[transform,box-shadow,border-color] hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg active:scale-[0.98]"
     >
-      <div className={cn("relative flex aspect-square items-center justify-center", accent.bg)}>
-        <div
-          aria-hidden
-          className={cn("absolute inset-0 opacity-[0.08]", accent.fg)}
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(135deg, currentColor 0, currentColor 1px, transparent 1px, transparent 14px)",
-          }}
-        />
+      <div
+        className={cn(
+          "relative flex aspect-square items-center justify-center overflow-hidden",
+          showImage ? "bg-white" : accent.bg,
+        )}
+      >
+        {showImage ? (
+          <img
+            src={product.primary_image_url!}
+            alt={product.name}
+            loading="lazy"
+            decoding="async"
+            onError={() => setImageFailed(true)}
+            className="h-full w-full object-contain p-3 transition-transform duration-300 ease-out group-hover:scale-[1.06] sm:p-4"
+          />
+        ) : (
+          <div
+            aria-hidden
+            className={cn("absolute inset-0 opacity-[0.08]", accent.fg)}
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(135deg, currentColor 0, currentColor 1px, transparent 1px, transparent 14px)",
+            }}
+          />
+        )}
         {product.badge && (
           <Badge
             className={cn(
@@ -93,11 +111,13 @@ export function ProductCard({ product }: ProductCardProps) {
         >
           <Heart className={cn("size-3 sm:size-4", wishlisted && "fill-primary")} />
         </button>
-        <CategoryIcon
-          slug={product.category.slug}
-          className={cn("relative size-10 sm:size-16", accent.fg, "opacity-70")}
-          strokeWidth={1.25}
-        />
+        {!showImage && (
+          <CategoryIcon
+            slug={product.category.slug}
+            className={cn("relative size-10 sm:size-16", accent.fg, "opacity-70")}
+            strokeWidth={1.25}
+          />
+        )}
       </div>
 
       <div className="flex flex-1 flex-col gap-1 p-2 sm:gap-1.5 sm:p-3">
@@ -169,7 +189,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
 export function ProductCardSkeleton() {
   return (
-    <div className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-border">
+    <div className="flex h-full w-full flex-col overflow-hidden rounded-xl border border-border">
       <Skeleton className="aspect-square w-full rounded-none" />
       <div className="flex flex-col gap-2 p-3">
         <Skeleton className="h-3 w-16" />
