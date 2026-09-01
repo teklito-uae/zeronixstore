@@ -505,6 +505,8 @@ class ComposerStaticInit5f392e735062874993307114c3ddf2f9
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\RefreshMicrolessImports' => __DIR__ . '/../..' . '/app/Console/Commands/RefreshMicrolessImports.php',
+        'App\\Console\\Commands\\SeedMicrolessDemoProducts' => __DIR__ . '/../..' . '/app/Console/Commands/SeedMicrolessDemoProducts.php',
         'App\\Events\\OrderPlaced' => __DIR__ . '/../..' . '/app/Events/OrderPlaced.php',
         'App\\Http\\Controllers\\AddressController' => __DIR__ . '/../..' . '/app/Http/Controllers/AddressController.php',
         'App\\Http\\Controllers\\Admin\\ScraperController' => __DIR__ . '/../..' . '/app/Http/Controllers/Admin/ScraperController.php',
@@ -668,6 +670,7 @@ class ComposerStaticInit5f392e735062874993307114c3ddf2f9
         'Database\\Seeders\\CategorySeeder' => __DIR__ . '/../..' . '/database/seeders/CategorySeeder.php',
         'Database\\Seeders\\DatabaseSeeder' => __DIR__ . '/../..' . '/database/seeders/DatabaseSeeder.php',
         'Database\\Seeders\\ProductSeeder' => __DIR__ . '/../..' . '/database/seeders/ProductSeeder.php',
+        'Database\\Seeders\\ZeronixCatalogSeeder' => __DIR__ . '/../..' . '/database/seeders/ZeronixCatalogSeeder.php',
         'DateError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
         'DateException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
         'DateInvalidOperationException' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',

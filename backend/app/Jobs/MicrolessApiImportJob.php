@@ -57,7 +57,16 @@ class MicrolessApiImportJob implements ShouldQueue
                 throw new \Exception("CSRF Token not found in Microless page source.");
             }
 
-            $cookies = $initialResponse->cookies();
+            // ->cookies() is a Guzzle CookieJar; ->toArray() yields each cookie's
+            // full attribute set (Name/Value/Domain/...), not a plain name=>value
+            // map, which is what withCookies() expects — passing the raw jar
+            // array through causes Guzzle's SetCookie::setValue() to receive an
+            // array instead of a string ("Array to string conversion"), which
+            // Laravel's error handler promotes to a fatal ErrorException.
+            $cookies = [];
+            foreach ($initialResponse->cookies() as $cookie) {
+                $cookies[$cookie->getName()] = $cookie->getValue();
+            }
             Log::info("Microless session established. CSRF Token: " . substr($csrfToken, 0, 5) . "...");
 
             $page = 1;
@@ -104,7 +113,7 @@ class MicrolessApiImportJob implements ShouldQueue
                     'Accept' => 'application/json, text/javascript, */*; q=0.01',
                     'Referer' => $searchPageUrl,
                     'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                ])->withCookies($cookies->toArray(), 'uae.microless.com')
+                ])->withCookies($cookies, 'uae.microless.com')
                   ->asJson()
                   ->post($apiUrl, $payload);
 

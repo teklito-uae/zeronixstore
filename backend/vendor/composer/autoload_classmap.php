@@ -6,6 +6,8 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'App\\Console\\Commands\\RefreshMicrolessImports' => $baseDir . '/app/Console/Commands/RefreshMicrolessImports.php',
+    'App\\Console\\Commands\\SeedMicrolessDemoProducts' => $baseDir . '/app/Console/Commands/SeedMicrolessDemoProducts.php',
     'App\\Events\\OrderPlaced' => $baseDir . '/app/Events/OrderPlaced.php',
     'App\\Http\\Controllers\\AddressController' => $baseDir . '/app/Http/Controllers/AddressController.php',
     'App\\Http\\Controllers\\Admin\\ScraperController' => $baseDir . '/app/Http/Controllers/Admin/ScraperController.php',
@@ -169,6 +171,7 @@ return array(
     'Database\\Seeders\\CategorySeeder' => $baseDir . '/database/seeders/CategorySeeder.php',
     'Database\\Seeders\\DatabaseSeeder' => $baseDir . '/database/seeders/DatabaseSeeder.php',
     'Database\\Seeders\\ProductSeeder' => $baseDir . '/database/seeders/ProductSeeder.php',
+    'Database\\Seeders\\ZeronixCatalogSeeder' => $baseDir . '/database/seeders/ZeronixCatalogSeeder.php',
     'DateError' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateError.php',
     'DateException' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateException.php',
     'DateInvalidOperationException' => $vendorDir . '/symfony/polyfill-php83/Resources/stubs/DateInvalidOperationException.php',

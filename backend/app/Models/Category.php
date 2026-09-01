@@ -6,7 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Category extends Model
 {
-    protected $fillable = ['name', 'slug', 'description', 'image', 'parent_id'];
+    protected $fillable = [
+        'name', 'slug', 'description', 'image', 'parent_id', 'microless_category_id',
+        'meta_title', 'meta_description', 'search_keywords',
+    ];
 
     protected $appends = ['image_url', 'total_products_count'];
     

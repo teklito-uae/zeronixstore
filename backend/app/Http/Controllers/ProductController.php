@@ -58,7 +58,11 @@ class ProductController extends Controller
             }
             
             if ($request->has('search')) {
-                $query->where('name', 'like', '%' . $request->search . '%');
+                $term = $request->search;
+                $query->where(function ($q) use ($term) {
+                    $q->where('name', 'like', "%{$term}%")
+                      ->orWhere('search_keywords', 'like', "%{$term}%");
+                });
             }
 
             return $query->paginate($perPage);
@@ -139,6 +143,7 @@ class ProductController extends Controller
         $products = Product::with(['category:id,name,slug', 'brand:id,name', 'imagesGallery'])
             ->where(function ($query) use ($q) {
                 $query->where('name', 'like', "%{$q}%")
+                      ->orWhere('search_keywords', 'like', "%{$q}%")
                       ->orWhereHas('brand', fn($bq) => $bq->where('name', 'like', "%{$q}%"));
             })
             ->where('status', 'active')
