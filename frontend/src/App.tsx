@@ -8,6 +8,8 @@ import Search from "@/pages/Search";
 import Account from "@/pages/Account";
 import Cart from "@/pages/Cart";
 import Wishlist from "@/pages/Wishlist";
+import Journal from "@/pages/Journal";
+import JournalDetail from "@/pages/JournalDetail";
 import AdminApp from "@/admin/AdminApp";
 import { CartProvider } from "@/features/cart/CartContext";
 import { WishlistProvider } from "@/features/wishlist/WishlistContext";
@@ -29,6 +31,8 @@ export default function App() {
                 <Route path="/account" element={<Account />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/wishlist" element={<Wishlist />} />
+                <Route path="/journal" element={<Journal />} />
+                <Route path="/journal/:slug" element={<JournalDetail />} />
                 <Route path="*" element={<ComingSoon />} />
               </Route>
             </Routes>

@@ -17,6 +17,7 @@ const footerColumns = [
     heading: "Company",
     links: [
       { label: "About Zeronix", href: "/about" },
+      { label: "Zeronix Journal", href: "/journal" },
       { label: "Careers", href: "/careers" },
       { label: "Contact Us", href: "/contact" },
     ],

@@ -70,6 +70,35 @@ export interface ProductFormValues {
   badge_color: string;
 }
 
+export type BlogPostStatus = "draft" | "published";
+
+export interface BlogPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string | null;
+  content: string;
+  cover_image: string | null;
+  cover_image_url: string | null;
+  author_name: string;
+  status: BlogPostStatus;
+  published_at: string | null;
+  meta_title: string | null;
+  meta_description: string | null;
+  created_at: string;
+}
+
+export interface BlogPostFormValues {
+  title: string;
+  excerpt: string;
+  content: string;
+  author_name: string;
+  status: BlogPostStatus;
+  meta_title: string;
+  meta_description: string;
+  cover_image?: File | null;
+}
+
 export type OrderStatus = "pending" | "processing" | "completed" | "cancelled";
 export type PaymentStatus = "pending" | "paid" | "failed" | "refunded";
 

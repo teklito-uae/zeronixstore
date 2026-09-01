@@ -11,6 +11,8 @@ import OrderDetail from "@/admin/pages/orders/OrderDetail";
 import CategoriesList from "@/admin/pages/categories/CategoriesList";
 import ImportsList from "@/admin/pages/imports/ImportsList";
 import ImportDetail from "@/admin/pages/imports/ImportDetail";
+import BlogList from "@/admin/pages/blog/BlogList";
+import BlogForm from "@/admin/pages/blog/BlogForm";
 
 export default function AdminApp() {
   return (
@@ -26,6 +28,9 @@ export default function AdminApp() {
             <Route path="orders" element={<OrdersList />} />
             <Route path="orders/:id" element={<OrderDetail />} />
             <Route path="categories" element={<CategoriesList />} />
+            <Route path="blog" element={<BlogList />} />
+            <Route path="blog/new" element={<BlogForm />} />
+            <Route path="blog/:id/edit" element={<BlogForm />} />
             <Route path="imports" element={<ImportsList />} />
             <Route path="imports/:id" element={<ImportDetail />} />
           </Route>

@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type {
+  BlogPostStatus,
   ImportJobStatus,
   ImportLogStatus,
   OrderStatus,
@@ -24,6 +25,11 @@ const paymentStatusStyles: Record<PaymentStatus, string> = {
 
 const productStatusStyles: Record<ProductStatus, string> = {
   active: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
+  draft: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
+};
+
+const blogPostStatusStyles: Record<BlogPostStatus, string> = {
+  published: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
   draft: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
 };
 
@@ -62,6 +68,10 @@ export function PaymentStatusBadge({ status }: { status: PaymentStatus }) {
 
 export function ProductStatusBadge({ status }: { status: ProductStatus }) {
   return <StatusBadgeBase label={status} className={productStatusStyles[status]} />;
+}
+
+export function BlogPostStatusBadge({ status }: { status: BlogPostStatus }) {
+  return <StatusBadgeBase label={status} className={blogPostStatusStyles[status]} />;
 }
 
 export function ImportJobStatusBadge({ status }: { status: ImportJobStatus }) {

@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AddressController;
+use App\Http\Controllers\BlogPostController;
 use App\Http\Controllers\Admin\ScraperController;
 
 Route::middleware('throttle:5,1')->group(function () {
@@ -21,6 +22,8 @@ Route::get('/products/brands', [ProductController::class, 'brandsForCategory']);
 Route::get('/products/price-range', [ProductController::class, 'getPriceRange']);
 Route::get('/products/{slug}', [ProductController::class, 'show']);
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::get('/blog-posts', [BlogPostController::class, 'index']);
+Route::get('/blog-posts/{slug}', [BlogPostController::class, 'show']);
 
 // Guest Order Route
 Route::post('/guest/orders', [OrderController::class, 'guestStore']);
@@ -47,7 +50,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/products', [ProductController::class, 'adminIndex']);
         Route::apiResource('products', ProductController::class)->except(['index', 'show']);
         Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
-        
+
+        Route::get('/blog-posts', [BlogPostController::class, 'adminIndex']);
+        Route::apiResource('blog-posts', BlogPostController::class)->except(['index', 'show']);
+
         Route::get('/orders', [OrderController::class, 'adminIndex']);
         Route::put('/orders/{order}', [OrderController::class, 'adminUpdate']);
 

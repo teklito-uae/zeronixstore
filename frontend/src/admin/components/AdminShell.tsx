@@ -5,6 +5,7 @@ import {
   ShoppingCart,
   FolderTree,
   DownloadCloud,
+  Newspaper,
   LogOut,
   ChevronsUpDown,
   ExternalLink,
@@ -41,6 +42,7 @@ const navItems = [
   { to: "/admin/products", label: "Products", icon: Package },
   { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { to: "/admin/categories", label: "Categories", icon: FolderTree },
+  { to: "/admin/blog", label: "Journal", icon: Newspaper },
   { to: "/admin/imports", label: "Imports", icon: DownloadCloud },
 ];
 

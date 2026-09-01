@@ -12,6 +12,13 @@ export function formatPrice(price: string | number): string {
   return aedFormatter.format(value);
 }
 
+const dateFormatter = new Intl.DateTimeFormat("en-AE", { day: "numeric", month: "short", year: "numeric" });
+
+/** Formats an ISO date string (as returned by the Laravel API) e.g. "1 Sep 2026". */
+export function formatDate(date: string): string {
+  return dateFormatter.format(new Date(date));
+}
+
 export function discountPercent(price: string, salePrice: string): number {
   const original = Number.parseFloat(price);
   const sale = Number.parseFloat(salePrice);

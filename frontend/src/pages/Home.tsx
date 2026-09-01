@@ -1,17 +1,14 @@
+import { BlogCarousel } from "@/components/home/BlogCarousel";
 import { BrandsShowcase } from "@/components/home/BrandsShowcase";
-import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { FAQSection } from "@/components/home/FAQSection";
 import { HeroBanner } from "@/components/home/HeroBanner";
 import { Newsletter } from "@/components/home/Newsletter";
 import { PopularSearches } from "@/components/home/PopularSearches";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
 import { StatsBar } from "@/components/home/StatsBar";
-import { useHomeCatalog } from "@/features/products/useHomeCatalog";
 import { useLazyProducts } from "@/features/products/useLazyProducts";
 
 export default function Home() {
-  const { loading, homeCategories } = useHomeCatalog();
-
   const deals = useLazyProducts({ perPage: 30, filter: (p) => p.sale_price !== null, limit: 10 });
   const laptops = useLazyProducts({ category: "laptops", perPage: 16 });
   const monitors = useLazyProducts({ category: "monitors", perPage: 16 });
@@ -22,7 +19,6 @@ export default function Home() {
   return (
     <>
       <HeroBanner />
-      <CategoryStrip categories={homeCategories} loading={loading} />
       <ProductCarousel
         title="Today's Deals"
         products={deals.products}
@@ -73,6 +69,7 @@ export default function Home() {
         loading={accessories.loading}
         sectionRef={accessories.ref}
       />
+      <BlogCarousel />
       <FAQSection />
       <PopularSearches />
       <Newsletter />
