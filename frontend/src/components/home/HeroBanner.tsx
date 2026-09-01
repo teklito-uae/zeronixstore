@@ -35,7 +35,7 @@ export function HeroBanner() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <section className="pt-4 pb-8 sm:pt-6 sm:pb-14">
+    <section className="pt-4 sm:pt-6">
       <div className="relative mx-auto max-w-7xl px-4">
         <div className="overflow-hidden rounded-lg" ref={emblaRef}>
           <div className="flex">

@@ -1,5 +1,6 @@
+import { useState, type FormEvent } from "react";
 import { Heart, Search, ShoppingCart, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MegaMenu } from "@/components/layout/MegaMenu";
@@ -10,6 +11,14 @@ import { useWishlist } from "@/features/wishlist/WishlistContext";
 export function Header() {
   const { totalCount: cartCount } = useCart();
   const { items: wishlistItems } = useWishlist();
+  const [query, setQuery] = useState("");
+  const navigate = useNavigate();
+
+  function handleSearch(e: FormEvent) {
+    e.preventDefault();
+    const q = query.trim();
+    if (q) navigate(`/search?q=${encodeURIComponent(q)}`);
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
@@ -22,15 +31,13 @@ export function Header() {
 
         <MegaMenu />
 
-        <form
-          role="search"
-          onSubmit={(e) => e.preventDefault()}
-          className="relative hidden flex-1 max-w-sm md:block"
-        >
+        <form role="search" onSubmit={handleSearch} className="relative hidden flex-1 max-w-sm md:block">
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search laptops, GPUs, monitors..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
             className="pl-9"
           />
         </form>

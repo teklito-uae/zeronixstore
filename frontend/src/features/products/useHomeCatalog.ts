@@ -2,21 +2,31 @@ import { useEffect, useState } from "react";
 import { fetchBrands, fetchCategories } from "./api";
 import type { Brand, Category } from "./types";
 
-// Homepage category strip: same curated slug list the mock catalog used, now
+// Homepage category strip: the full taxonomy from ZeronixCatalogSeeder,
 // resolved against whatever the API actually returns — categories that
 // don't exist yet are silently skipped instead of breaking the page.
 const HOME_CATEGORY_SLUGS = [
   "laptops",
+  "gaming-laptops",
+  "business-laptops",
+  "2-in-1-laptops",
   "desktops",
+  "gaming-pcs",
+  "prebuilt-desktops",
+  "mini-pcs",
+  "components",
   "graphics-cards",
   "processors",
-  "monitors",
+  "motherboards",
+  "memory-ram",
   "storage",
+  "monitors",
+  "gaming-monitors",
+  "4k-ultrawide-monitors",
+  "office-monitors",
   "accessories",
   "keyboards-mice",
   "headsets",
-  "gaming-laptops",
-  "gaming-pcs",
   "webcams-streaming",
 ];
 

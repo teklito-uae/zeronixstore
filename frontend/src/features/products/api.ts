@@ -24,16 +24,29 @@ export async function fetchCategories(): Promise<Category[]> {
   return res.json();
 }
 
-export async function fetchBrands(): Promise<Brand[]> {
-  const res = await fetch(`${API_BASE_URL}/products/brands`);
+export async function fetchBrands(category?: string): Promise<Brand[]> {
+  const params = category ? `?category=${encodeURIComponent(category)}` : "";
+  const res = await fetch(`${API_BASE_URL}/products/brands${params}`);
   if (!res.ok) throw new Error(`Failed to load brands (${res.status})`);
   return res.json();
 }
+
+export async function fetchPriceRange(category?: string): Promise<{ min: number; max: number }> {
+  const params = category ? `?category=${encodeURIComponent(category)}` : "";
+  const res = await fetch(`${API_BASE_URL}/products/price-range${params}`);
+  if (!res.ok) throw new Error(`Failed to load price range (${res.status})`);
+  return res.json();
+}
+
+export type ProductSort = "featured" | "price_asc" | "price_desc" | "newest";
 
 interface ProductsQuery {
   category?: string;
   brand?: string;
   search?: string;
+  sort?: ProductSort;
+  priceMin?: number;
+  priceMax?: number;
   perPage?: number;
   page?: number;
 }
@@ -48,6 +61,9 @@ export async function fetchProducts(query: ProductsQuery = {}): Promise<Paginate
   if (query.category) params.set("category", query.category);
   if (query.brand) params.set("brand", query.brand);
   if (query.search) params.set("search", query.search);
+  if (query.sort && query.sort !== "featured") params.set("sort", query.sort);
+  if (query.priceMin != null) params.set("price_min", String(query.priceMin));
+  if (query.priceMax != null) params.set("price_max", String(query.priceMax));
   params.set("per_page", String(query.perPage ?? 24));
   if (query.page) params.set("page", String(query.page));
 
@@ -56,8 +72,8 @@ export async function fetchProducts(query: ProductsQuery = {}): Promise<Paginate
   const json = await res.json();
   const rawList: RawProduct[] = json.data ?? [];
 
-  // index() doesn't filter by status server-side (only search() does) — drop
-  // drafts here so the storefront never shows unpublished products.
+  // Defense in depth: index() filters status=active server-side, but keep the
+  // client-side guard too in case that ever regresses.
   return {
     data: rawList.filter((p) => p.status === "active").map(toProduct),
     meta: json.meta,

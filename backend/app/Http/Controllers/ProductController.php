@@ -30,7 +30,7 @@ class ProductController extends Controller
         $cacheKey = 'products_page_' . md5(json_encode($request->all())) . '_v' . $version;
 
         $products = Cache::remember($cacheKey, 60, function () use ($request, $perPage) {
-            $query = Product::with(['category', 'variants', 'brand']);
+            $query = Product::with(['category', 'variants', 'brand'])->where('status', 'active');
 
             if ($request->has('category')) {
                 $category = Category::where('slug', $request->category)->first();
@@ -63,6 +63,20 @@ class ProductController extends Controller
                     $q->where('name', 'like', "%{$term}%")
                       ->orWhere('search_keywords', 'like', "%{$term}%");
                 });
+            }
+
+            switch ($request->query('sort')) {
+                case 'price_asc':
+                    $query->orderBy('price', 'asc');
+                    break;
+                case 'price_desc':
+                    $query->orderBy('price', 'desc');
+                    break;
+                case 'newest':
+                    $query->orderBy('created_at', 'desc');
+                    break;
+                default:
+                    $query->orderBy('featured', 'desc')->orderBy('created_at', 'desc');
             }
 
             return $query->paginate($perPage);
