@@ -34,8 +34,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductCard, ProductCardSkeleton } from "@/components/product/ProductCard";
-import { fetchProducts } from "@/features/products/api";
 import { useProduct } from "@/features/products/useProduct";
+import { useLazyProducts } from "@/features/products/useLazyProducts";
 import { useCart } from "@/features/cart/CartContext";
 import { useWishlist } from "@/features/wishlist/WishlistContext";
 import { discountPercent, formatPrice } from "@/lib/format";
@@ -73,8 +73,16 @@ function ProductDetailView({ product }: { product: Product }) {
     product.variants[0]?.attributes ?? {},
   );
   const [quantity, setQuantity] = useState(1);
-  const [related, setRelated] = useState<Product[]>([]);
-  const [relatedLoading, setRelatedLoading] = useState(true);
+  const {
+    ref: relatedRef,
+    products: related,
+    loading: relatedLoading,
+  } = useLazyProducts({
+    category: product.category.slug,
+    perPage: 12,
+    filter: (p) => p.id !== product.id,
+    limit: 10,
+  });
 
   const { addItem } = useCart();
   const { isWishlisted, toggle } = useWishlist();
@@ -95,7 +103,27 @@ function ProductDetailView({ product }: { product: Product }) {
   const onSale = strikePrice !== null;
   const installment = (Number.parseFloat(displayPrice) / 4).toFixed(0);
 
-  const highlights = useMemo(() => getSpecEntries(product).slice(0, 4), [product]);
+  const specEntries = useMemo(() => getSpecEntries(product), [product]);
+  const specHighlights = useMemo(() => getSpecHighlights(product), [product]);
+  const highlights = useMemo(
+    () =>
+      specHighlights.length > 0
+        ? specHighlights.slice(0, 6)
+        : specEntries.slice(0, 4).map(([key, value]) => `${key}: ${value}`),
+    [specHighlights, specEntries],
+  );
+
+  const sanitizedDescription = useMemo(() => {
+    if (!product.description) return null;
+    if (!/<[a-z][\s\S]*>/i.test(product.description)) return null;
+    return DOMPurify.sanitize(product.description, {
+      ALLOWED_TAGS: [
+        "p", "br", "strong", "b", "em", "i", "ul", "ol", "li",
+        "h1", "h2", "h3", "h4", "table", "thead", "tbody", "tr", "td", "th", "span", "div", "a",
+      ],
+      ALLOWED_ATTR: ["href"],
+    });
+  }, [product.description]);
 
   useEffect(() => {
     setSelectedAttrs(product.variants[0]?.attributes ?? {});
@@ -115,24 +143,6 @@ function ProductDetailView({ product }: { product: Product }) {
     meta.setAttribute("content", description);
   }, [product]);
 
-  useEffect(() => {
-    let cancelled = false;
-    setRelatedLoading(true);
-    fetchProducts({ category: product.category.slug, perPage: 12 })
-      .then((res) => {
-        if (cancelled) return;
-        setRelated(res.data.filter((p) => p.id !== product.id).slice(0, 10));
-        setRelatedLoading(false);
-      })
-      .catch(() => {
-        if (!cancelled) setRelatedLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [product.id, product.category.slug]);
-
-  const specEntries = getSpecEntries(product);
   const maxQuantity = hasVariants ? Math.min(stock, 10) : 10;
 
   function handleAddToCart() {
@@ -170,27 +180,27 @@ function ProductDetailView({ product }: { product: Product }) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 pb-24 pt-5 sm:pb-12 sm:pt-8">
-      <Breadcrumb className="mb-5">
-        <BreadcrumbList>
-          <BreadcrumbItem>
+      <Breadcrumb className="mb-5 overflow-hidden">
+        <BreadcrumbList className="flex-nowrap">
+          <BreadcrumbItem className="shrink-0">
             <BreadcrumbLink asChild>
               <Link to="/">Home</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
+          <BreadcrumbSeparator className="shrink-0" />
+          <BreadcrumbItem className="shrink-0">
             <BreadcrumbLink asChild>
               <Link to={`/category/${product.category.slug}`}>{product.category.name}</Link>
             </BreadcrumbLink>
           </BreadcrumbItem>
-          <BreadcrumbSeparator />
-          <BreadcrumbItem>
-            <BreadcrumbPage className="line-clamp-1">{product.name}</BreadcrumbPage>
+          <BreadcrumbSeparator className="shrink-0" />
+          <BreadcrumbItem className="min-w-0 flex-1">
+            <BreadcrumbPage className="block truncate">{product.name}</BreadcrumbPage>
           </BreadcrumbItem>
         </BreadcrumbList>
       </Breadcrumb>
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,0.85fr)] lg:gap-10">
+      <div className="grid gap-8 lg:grid-cols-[1fr_1fr] lg:gap-10">
         <ProductGallery
           images={product.primary_image_url ? [product.primary_image_url, ...product.images_gallery_urls.filter((u) => u !== product.primary_image_url)] : product.images_gallery_urls}
           name={product.name}
@@ -199,7 +209,7 @@ function ProductDetailView({ product }: { product: Product }) {
           badgeColor={product.badge_color}
         />
 
-        <div className="flex flex-col gap-4">
+        <div className="flex min-w-0 flex-col gap-4">
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between gap-3">
               {product.brand ? (
@@ -247,11 +257,11 @@ function ProductDetailView({ product }: { product: Product }) {
             </div>
 
             {highlights.length > 0 && (
-              <ul className="mt-1 grid grid-cols-1 gap-x-4 gap-y-1 sm:grid-cols-2">
-                {highlights.map(([key, value]) => (
-                  <li key={key} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-                    <CheckCircle2 className="size-3.5 shrink-0 text-primary" />
-                    <span className="text-foreground">{key}:</span> {value}
+              <ul className="mt-1 flex flex-col gap-1.5">
+                {highlights.map((line) => (
+                  <li key={line} className="flex items-start gap-1.5 text-sm text-muted-foreground">
+                    <CheckCircle2 className="mt-0.5 size-3.5 shrink-0 text-primary" />
+                    <span>{line}</span>
                   </li>
                 ))}
               </ul>
@@ -376,7 +386,12 @@ function ProductDetailView({ product }: { product: Product }) {
             <TabsTrigger value="reviews">Ratings & Reviews</TabsTrigger>
           </TabsList>
           <TabsContent value="description" className="pt-5">
-            {product.description ? (
+            {sanitizedDescription ? (
+              <div
+                className="max-w-3xl text-sm leading-relaxed text-muted-foreground [&_a]:text-primary [&_a]:underline [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:mb-1 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_strong]:font-semibold [&_strong]:text-foreground [&_table]:my-4 [&_table]:w-full [&_table]:table-fixed [&_table]:border-collapse [&_table]:overflow-hidden [&_table]:rounded-lg [&_table]:border [&_table]:border-border [&_td]:break-words [&_td]:border [&_td]:border-border [&_td]:p-2.5 [&_td]:align-top [&_tr:nth-child(even)]:bg-muted/40 [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5"
+                dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
+              />
+            ) : product.description ? (
               <p className="max-w-3xl whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
                 {product.description}
               </p>
@@ -430,7 +445,7 @@ function ProductDetailView({ product }: { product: Product }) {
       </div>
 
       {(relatedLoading || related.length > 0) && (
-        <section className="mt-12 sm:mt-16">
+        <section ref={relatedRef} className="mt-12 sm:mt-16">
           <div className="mb-5 flex items-center justify-between gap-4">
             <h2 className="text-xl font-semibold text-foreground sm:text-2xl">You may also like</h2>
             <Link

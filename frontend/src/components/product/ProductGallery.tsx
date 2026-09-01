@@ -22,8 +22,15 @@ interface ProductGalleryProps {
 export function ProductGallery({ images, name, categorySlug, badge, badgeColor }: ProductGalleryProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [zoomStyle, setZoomStyle] = useState<{ transformOrigin: string } | null>(null);
+  const [loadedSrcs, setLoadedSrcs] = useState<Set<string>>(new Set());
   const accent = getCategoryAccent(categorySlug);
   const hasImages = images.length > 0;
+  const activeSrc = images[activeIndex];
+  const activeLoaded = loadedSrcs.has(activeSrc);
+
+  function markLoaded(src: string) {
+    setLoadedSrcs((prev) => (prev.has(src) ? prev : new Set(prev).add(src)));
+  }
 
   function handleMouseMove(e: MouseEvent<HTMLDivElement>) {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -33,11 +40,11 @@ export function ProductGallery({ images, name, categorySlug, badge, badgeColor }
   }
 
   return (
-    <div className="flex flex-col gap-3 lg:flex-row-reverse">
+    <div className="flex min-w-0 flex-col gap-3 lg:flex-row-reverse">
       <div
         className={cn(
-          "group relative flex aspect-square flex-1 items-center justify-center overflow-hidden rounded-xl border border-border",
-          accent.bg,
+          "group relative flex aspect-[4/3] flex-1 items-center justify-center overflow-hidden rounded-xl border border-border",
+          hasImages ? "bg-muted" : accent.bg,
         )}
         onMouseMove={hasImages ? handleMouseMove : undefined}
         onMouseLeave={() => setZoomStyle(null)}
@@ -64,12 +71,17 @@ export function ProductGallery({ images, name, categorySlug, badge, badgeColor }
         )}
         {hasImages ? (
           <>
+            {!activeLoaded && <div aria-hidden className="absolute inset-0 animate-pulse bg-foreground/5" />}
             <img
-              key={images[activeIndex]}
-              src={images[activeIndex]}
+              key={activeSrc}
+              src={activeSrc}
               alt={name}
+              loading="eager"
+              decoding="async"
+              onLoad={() => markLoaded(activeSrc)}
               className={cn(
-                "relative size-full object-contain p-6 transition-transform duration-200 ease-out",
+                "relative size-full object-contain p-6 transition-[opacity,transform] duration-300 ease-out",
+                activeLoaded ? "opacity-100" : "opacity-0",
                 zoomStyle ? "scale-[2] cursor-zoom-out" : "cursor-zoom-in group-hover:scale-[1.03]",
               )}
               style={zoomStyle ?? undefined}
@@ -98,7 +110,7 @@ export function ProductGallery({ images, name, categorySlug, badge, badgeColor }
                 i === activeIndex ? "border-primary ring-1 ring-primary" : "border-border hover:border-foreground/30",
               )}
             >
-              <img src={src} alt="" className="size-full object-contain p-1.5" />
+              <img src={src} alt="" loading="lazy" decoding="async" className="size-full object-contain p-1.5" />
             </button>
           ))}
         </div>
