@@ -1,4 +1,4 @@
-import type { Brand, Category, Product } from "./types";
+import type { Brand, Category, Product, ProductSuggestion } from "./types";
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL as string | undefined) ?? "http://localhost:8000/api";
 
@@ -35,6 +35,16 @@ export async function fetchPriceRange(category?: string): Promise<{ min: number;
   const params = category ? `?category=${encodeURIComponent(category)}` : "";
   const res = await fetch(`${API_BASE_URL}/products/price-range${params}`);
   if (!res.ok) throw new Error(`Failed to load price range (${res.status})`);
+  return res.json();
+}
+
+// Lightweight autocomplete endpoint (name/keywords/brand LIKE-match, capped
+// server-side at 20) — built for live-typing search UI, not the full listing
+// grid that fetchProducts() backs.
+export async function searchProductSuggestions(query: string, limit = 6): Promise<ProductSuggestion[]> {
+  const params = new URLSearchParams({ q: query, limit: String(limit) });
+  const res = await fetch(`${API_BASE_URL}/products/search?${params.toString()}`);
+  if (!res.ok) throw new Error(`Failed to search products (${res.status})`);
   return res.json();
 }
 

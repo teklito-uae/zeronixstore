@@ -164,13 +164,13 @@ export function ProductCard({ product }: ProductCardProps) {
               {product.deliveryEstimate}
             </span>
           )}
-          <div className="flex items-end justify-between gap-1">
+          <div className="flex items-end justify-between gap-0.5 sm:gap-1">
             <div className="flex min-w-0 flex-col">
-              <span className="truncate text-sm font-semibold text-foreground sm:text-base">
+              <span className="truncate text-xs font-semibold text-foreground sm:text-base">
                 {formatPrice(onSale ? product.sale_price! : product.price)}
               </span>
               {onSale && (
-                <span className="truncate text-[11px] text-muted-foreground line-through sm:text-xs">
+                <span className="truncate text-[10px] text-muted-foreground line-through sm:text-xs">
                   {formatPrice(product.price)}
                 </span>
               )}
@@ -179,10 +179,10 @@ export function ProductCard({ product }: ProductCardProps) {
               size="icon"
               variant="secondary"
               aria-label="Add to cart"
-              className="size-7 shrink-0 sm:size-9"
+              className="size-6 shrink-0 sm:size-9"
               onClick={handleAddToCart}
             >
-              <ShoppingCart className="size-3.5 sm:size-4" />
+              <ShoppingCart className="size-3 sm:size-4" />
             </Button>
           </div>
         </div>

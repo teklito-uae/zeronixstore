@@ -35,9 +35,9 @@ export function HeroBanner() {
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   return (
-    <section className="pt-4 sm:pt-6">
-      <div className="relative mx-auto max-w-7xl px-4">
-        <div className="overflow-hidden rounded-lg" ref={emblaRef}>
+    <section className="sm:pt-6">
+      <div className="relative mx-auto max-w-7xl sm:px-4">
+        <div className="overflow-hidden sm:rounded-lg" ref={emblaRef}>
           <div className="flex">
             {heroSlides.map((slide) => (
               <div key={slide.id} className="min-w-0 flex-[0_0_100%]">
@@ -74,8 +74,8 @@ export function HeroBanner() {
           </span>
         </button>
 
-        {/* Dots — dark backdrop so they read on banners of any brightness */}
-        <div className="absolute inset-x-0 bottom-3 flex items-center justify-center gap-2 sm:bottom-5">
+        {/* Dots — desktop only; mobile relies on swipe, no pill clutter over the banner */}
+        <div className="absolute inset-x-0 bottom-5 hidden items-center justify-center gap-2 sm:flex">
           <div className="flex items-center gap-2 rounded-full bg-black/25 px-2.5 py-1.5 backdrop-blur">
             {heroSlides.map((slide, i) => (
               <button

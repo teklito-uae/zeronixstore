@@ -1,5 +1,5 @@
 import { useRef, useState, type ReactNode } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, LayoutGrid } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { Link } from "react-router-dom";
 import {
@@ -67,12 +67,13 @@ export function CategoriesSheet({ trigger }: CategoriesSheetProps) {
         onMouseLeave={scheduleCloseFlyout}
       >
         <SheetHeader className="flex-row items-center gap-3 border-b border-border">
-          <Link to="/" onClick={closeSheet} className="shrink-0">
-            <img src="/zeronix-logo.webp" alt="Zeronix" className="h-5 w-auto" />
-          </Link>
-          <SheetTitle className="text-sm font-semibold text-foreground">
-            Shop by Category
-          </SheetTitle>
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-accent text-primary">
+            <LayoutGrid className="size-4.5" strokeWidth={1.75} />
+          </span>
+          <div className="flex flex-col">
+            <SheetTitle className="text-base font-semibold text-foreground">Shop by Category</SheetTitle>
+            <span className="text-xs text-muted-foreground">Browse everything we sell</span>
+          </div>
         </SheetHeader>
 
         <nav aria-label="Categories" className="flex min-h-0 flex-1 flex-col gap-0.5 overflow-y-auto px-3 py-2">

@@ -65,7 +65,7 @@ export function FAQSection() {
           <span className="flex size-11 items-center justify-center rounded-full bg-accent text-primary">
             <HelpCircle className="size-5" strokeWidth={1.75} />
           </span>
-          <h2 className="text-xl font-semibold text-foreground sm:text-2xl">Frequently Asked Questions</h2>
+          <h2 className="text-base font-semibold text-foreground sm:text-2xl">Frequently Asked Questions</h2>
           <p className="max-w-md text-sm text-muted-foreground">
             Shipping, warranty and everything else UAE shoppers ask us most.
           </p>

@@ -55,7 +55,7 @@ export function BrandsShowcase() {
   return (
     <section className="border-y border-border bg-background py-6 sm:py-8">
       <div className="mx-auto max-w-7xl px-4">
-        <h2 className="mb-4 text-lg font-semibold text-foreground sm:mb-5 sm:text-xl">Shop By Brand</h2>
+        <h2 className="mb-3 text-base font-semibold text-foreground sm:mb-5 sm:text-xl">Shop By Brand</h2>
         <div className="flex flex-col gap-2 sm:gap-2.5">
           <MarqueeRow items={rowA} duration={26} />
           <MarqueeRow items={rowB} duration={30} reverse />

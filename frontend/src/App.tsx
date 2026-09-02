@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Layout } from "@/components/layout/Layout";
+import { ScrollToTop } from "@/components/layout/ScrollToTop";
 import ComingSoon from "@/pages/ComingSoon";
 import Home from "@/pages/Home";
 import ProductDetail from "@/pages/ProductDetail";
@@ -21,6 +22,7 @@ export default function App() {
       <CartProvider>
         <WishlistProvider>
           <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route path="/admin/*" element={<AdminApp />} />
               <Route element={<Layout />}>

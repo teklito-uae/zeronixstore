@@ -6,7 +6,9 @@ import {
   Calendar,
   Check,
   CheckCircle2,
+  ChevronDown,
   ChevronRight,
+  Flame,
   Heart,
   Minus,
   Package,
@@ -58,6 +60,41 @@ function estimatedDelivery() {
   return `${fmt(from)} – ${fmt(to)}`;
 }
 
+// Mobile buy-bar urgency nudge — a countdown to a random point 5-30 minutes out.
+// Pinned in sessionStorage per product so it counts down consistently across
+// re-renders instead of re-rolling every time, then quietly re-rolls once it
+// lapses instead of freezing at 0:00 or vanishing mid-session.
+function dealDeadlineKey(productId: number) {
+  return `zrx-deal-deadline-${productId}`;
+}
+
+function rollDealDeadline(productId: number): number {
+  const deadline = Date.now() + (5 + Math.random() * 25) * 60_000;
+  try {
+    sessionStorage.setItem(dealDeadlineKey(productId), String(deadline));
+  } catch {
+    // Storage unavailable (private mode, quota) — timer still works, just won't persist across renders.
+  }
+  return deadline;
+}
+
+function readDealDeadline(productId: number): number {
+  try {
+    const stored = Number(sessionStorage.getItem(dealDeadlineKey(productId)));
+    if (stored && stored > Date.now()) return stored;
+  } catch {
+    // ignore, fall through to a fresh roll
+  }
+  return rollDealDeadline(productId);
+}
+
+function formatCountdown(ms: number) {
+  const totalSeconds = Math.max(0, Math.floor(ms / 1000));
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export default function ProductDetail() {
   const { slug } = useParams<{ slug: string }>();
   const { product, loading, notFound } = useProduct(slug);
@@ -73,6 +110,8 @@ function ProductDetailView({ product }: { product: Product }) {
     product.variants[0]?.attributes ?? {},
   );
   const [quantity, setQuantity] = useState(1);
+  const [descExpanded, setDescExpanded] = useState(false);
+  const [dealMsLeft, setDealMsLeft] = useState(0);
   const {
     ref: relatedRef,
     products: related,
@@ -128,6 +167,18 @@ function ProductDetailView({ product }: { product: Product }) {
   useEffect(() => {
     setSelectedAttrs(product.variants[0]?.attributes ?? {});
     setQuantity(1);
+    setDescExpanded(false);
+  }, [product.id]);
+
+  useEffect(() => {
+    const tick = () => {
+      let remaining = readDealDeadline(product.id) - Date.now();
+      if (remaining <= 0) remaining = rollDealDeadline(product.id) - Date.now();
+      setDealMsLeft(remaining);
+    };
+    tick();
+    const id = window.setInterval(tick, 1000);
+    return () => window.clearInterval(id);
   }, [product.id]);
 
   useEffect(() => {
@@ -183,7 +234,7 @@ function ProductDetailView({ product }: { product: Product }) {
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 pb-24 pt-5 sm:pb-12 sm:pt-8">
+    <div className="mx-auto max-w-7xl px-4 pb-8 pt-5 sm:pb-12 sm:pt-8">
       <Breadcrumb className="mb-5 overflow-hidden">
         <BreadcrumbList className="flex-nowrap">
           <BreadcrumbItem className="shrink-0">
@@ -243,7 +294,7 @@ function ProductDetailView({ product }: { product: Product }) {
               </div>
             </div>
 
-            <h1 className="text-xl font-semibold leading-snug text-foreground sm:text-2xl">{product.name}</h1>
+            <h1 className="text-lg font-semibold leading-snug text-foreground sm:text-2xl">{product.name}</h1>
 
             <div className="flex flex-wrap items-center gap-3">
               {product.rating ? (
@@ -275,9 +326,9 @@ function ProductDetailView({ product }: { product: Product }) {
           <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-4 sm:p-5 lg:sticky lg:top-20">
             <div className="flex flex-col gap-1.5">
               <div className="flex flex-wrap items-end gap-2.5">
-                <span className="text-3xl font-semibold text-foreground">{formatPrice(displayPrice)}</span>
+                <span className="text-2xl font-semibold text-foreground sm:text-3xl">{formatPrice(displayPrice)}</span>
                 {strikePrice && (
-                  <span className="text-base text-muted-foreground line-through">{formatPrice(strikePrice)}</span>
+                  <span className="text-sm text-muted-foreground line-through sm:text-base">{formatPrice(strikePrice)}</span>
                 )}
                 {onSale && (
                   <Badge className="border-none bg-red-600 text-white">
@@ -390,15 +441,40 @@ function ProductDetailView({ product }: { product: Product }) {
             <TabsTrigger value="reviews">Ratings & Reviews</TabsTrigger>
           </TabsList>
           <TabsContent value="description" className="pt-5">
-            {sanitizedDescription ? (
-              <div
-                className="max-w-3xl text-sm leading-relaxed text-muted-foreground [&_a]:text-primary [&_a]:underline [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:mb-1 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_strong]:font-semibold [&_strong]:text-foreground [&_table]:my-4 [&_table]:w-full [&_table]:table-fixed [&_table]:border-collapse [&_table]:overflow-hidden [&_table]:rounded-lg [&_table]:border [&_table]:border-border [&_td]:break-words [&_td]:border [&_td]:border-border [&_td]:p-2.5 [&_td]:align-top [&_th]:break-words [&_th]:border [&_th]:border-border [&_th]:bg-muted/60 [&_th]:p-2.5 [&_th]:text-left [&_th]:align-top [&_th]:font-semibold [&_th]:text-foreground [&_tr:nth-child(even)]:bg-muted/40 [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5"
-                dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
-              />
-            ) : product.description ? (
-              <p className="max-w-3xl whitespace-pre-line text-sm leading-relaxed text-muted-foreground">
-                {product.description}
-              </p>
+            {sanitizedDescription || product.description ? (
+              <>
+                <div className="relative max-w-3xl">
+                  {sanitizedDescription ? (
+                    <div
+                      className={cn(
+                        "overflow-hidden text-sm leading-relaxed text-muted-foreground transition-[max-height] duration-300 [&_a]:text-primary [&_a]:underline [&_h1]:mb-2 [&_h1]:text-lg [&_h1]:font-semibold [&_h1]:text-foreground [&_h2]:mb-2 [&_h2]:text-base [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:mb-2 [&_h3]:font-semibold [&_h3]:text-foreground [&_li]:mb-1 [&_ol]:mb-3 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_strong]:font-semibold [&_strong]:text-foreground [&_table]:my-4 [&_table]:w-full [&_table]:table-fixed [&_table]:border-collapse [&_table]:overflow-hidden [&_table]:rounded-lg [&_table]:border [&_table]:border-border [&_td]:break-words [&_td]:border [&_td]:border-border [&_td]:p-2.5 [&_td]:align-top [&_th]:break-words [&_th]:border [&_th]:border-border [&_th]:bg-muted/60 [&_th]:p-2.5 [&_th]:text-left [&_th]:align-top [&_th]:font-semibold [&_th]:text-foreground [&_tr:nth-child(even)]:bg-muted/40 [&_ul]:mb-3 [&_ul]:list-disc [&_ul]:pl-5 sm:max-h-none",
+                        !descExpanded && "max-h-40",
+                      )}
+                      dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
+                    />
+                  ) : (
+                    <p
+                      className={cn(
+                        "overflow-hidden whitespace-pre-line text-sm leading-relaxed text-muted-foreground transition-[max-height] duration-300 sm:max-h-none",
+                        !descExpanded && "max-h-40",
+                      )}
+                    >
+                      {product.description}
+                    </p>
+                  )}
+                  {!descExpanded && (
+                    <div className="pointer-events-none absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-background to-transparent sm:hidden" />
+                  )}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setDescExpanded((v) => !v)}
+                  className="mt-2 flex items-center gap-1 text-sm font-medium text-primary sm:hidden"
+                >
+                  {descExpanded ? "View less" : "View more"}
+                  <ChevronDown className={cn("size-4 transition-transform duration-200", descExpanded && "rotate-180")} />
+                </button>
+              </>
             ) : (
               <p className="text-sm text-muted-foreground">No description available for this product yet.</p>
             )}
@@ -450,26 +526,26 @@ function ProductDetailView({ product }: { product: Product }) {
 
       {(relatedLoading || related.length > 0) && (
         <section ref={relatedRef} className="mt-12 sm:mt-16">
-          <div className="mb-5 flex items-center justify-between gap-4">
-            <h2 className="text-xl font-semibold text-foreground sm:text-2xl">You may also like</h2>
+          <div className="mb-3 flex items-center justify-between gap-4 sm:mb-5">
+            <h2 className="text-base font-semibold text-foreground sm:text-2xl">You may also like</h2>
             <Link
               to={`/category/${product.category.slug}`}
-              className="flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+              className="flex items-center gap-1 text-xs font-medium text-primary hover:underline sm:text-sm"
             >
               View all
               <ChevronRight className="size-3.5" />
             </Link>
           </div>
           <Carousel opts={{ align: "start" }}>
-            <CarouselContent className="-ml-4">
+            <CarouselContent className="-ml-2 sm:-ml-4">
               {relatedLoading
-                ? Array.from({ length: 5 }).map((_, i) => (
-                    <CarouselItem key={i} className="basis-1/2 pl-4 sm:basis-1/4 lg:basis-1/5">
+                ? Array.from({ length: 6 }).map((_, i) => (
+                    <CarouselItem key={i} className="basis-1/3 pl-2 sm:basis-1/4 sm:pl-4 lg:basis-1/5">
                       <ProductCardSkeleton />
                     </CarouselItem>
                   ))
                 : related.map((item) => (
-                    <CarouselItem key={item.id} className="basis-1/2 pl-4 sm:basis-1/4 lg:basis-1/5">
+                    <CarouselItem key={item.id} className="basis-1/3 pl-2 sm:basis-1/4 sm:pl-4 lg:basis-1/5">
                       <ProductCard product={item} />
                     </CarouselItem>
                   ))}
@@ -478,18 +554,26 @@ function ProductDetailView({ product }: { product: Product }) {
         </section>
       )}
 
-      <div className="fixed inset-x-0 bottom-16 z-30 flex items-center gap-3 border-t border-border bg-background/95 p-3 backdrop-blur supports-backdrop-filter:bg-background/80 sm:hidden">
-        <div className="flex flex-col">
-          <span className="text-base font-semibold text-foreground">{formatPrice(displayPrice)}</span>
-          {strikePrice && <span className="text-xs text-muted-foreground line-through">{formatPrice(strikePrice)}</span>}
+      <div className="fixed inset-x-0 bottom-0 z-30 flex flex-col gap-1.5 border-t border-border bg-background p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-6px_20px_-4px_rgba(0,0,0,0.15)] sm:hidden">
+        {inStock && (
+          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-orange-600">
+            <Flame className="size-3.5 shrink-0" />
+            Price may go up in <span className="tabular-nums">{formatCountdown(dealMsLeft)}</span>
+          </div>
+        )}
+        <div className="flex items-center gap-2.5">
+          <div className="flex min-w-0 flex-1 flex-col">
+            <span className="truncate text-xl font-bold text-foreground">{formatPrice(displayPrice)}</span>
+            {strikePrice && <span className="truncate text-[11px] text-muted-foreground line-through">{formatPrice(strikePrice)}</span>}
+          </div>
+          <Button variant="outline" size="icon-lg" aria-label="Toggle wishlist" className="shrink-0" onClick={handleWishlist}>
+            <Heart className={cn("size-4", wishlisted && "fill-primary text-primary")} />
+          </Button>
+          <Button size="lg" className="w-24 shrink-0 px-0" disabled={!inStock} onClick={handleAddToCart}>
+            <ShoppingCart className="size-4" />
+            Add
+          </Button>
         </div>
-        <Button variant="outline" size="icon-lg" aria-label="Toggle wishlist" onClick={handleWishlist}>
-          <Heart className={cn("size-4", wishlisted && "fill-primary text-primary")} />
-        </Button>
-        <Button size="lg" className="flex-1" disabled={!inStock} onClick={handleAddToCart}>
-          <ShoppingCart className="size-4" />
-          Add to cart
-        </Button>
       </div>
     </div>
   );

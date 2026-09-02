@@ -34,6 +34,18 @@ export interface Variant {
 
 export type ProductStatus = "active" | "draft";
 
+/** Shape returned by the lightweight `/products/search` autocomplete endpoint. */
+export interface ProductSuggestion {
+  id: number;
+  name: string;
+  slug: string;
+  price: string;
+  sale_price: string | null;
+  primary_image_url: string | null;
+  category: { name: string; slug: string } | null;
+  brand: { name: string } | null;
+}
+
 export interface Rating {
   average: number;
   count: number;

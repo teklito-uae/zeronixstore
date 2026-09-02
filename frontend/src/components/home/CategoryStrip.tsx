@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import { MoreHorizontal } from "lucide-react";
+import { CategoriesSheet } from "@/components/layout/CategoriesSheet";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getCategoryAccent } from "@/lib/category-accents";
 import { CategoryIcon } from "@/lib/category-icons";
 import { cn } from "@/lib/utils";
 import type { Category } from "@/features/products/types";
@@ -10,54 +12,58 @@ interface CategoryStripProps {
   loading?: boolean;
 }
 
-// Each top-level category gets its own icon color so the row reads as a set
-// of distinct departments at a glance, not a wall of identical icons.
-const accentBySlug: Record<string, string> = {
-  laptops: "text-blue-600",
-  desktops: "text-violet-600",
-  components: "text-amber-600",
-  monitors: "text-cyan-600",
-  accessories: "text-rose-600",
-  networking: "text-teal-600",
-  "printers-scanners": "text-slate-600",
-  "gaming-chairs-desks": "text-orange-600",
-};
+// Mobile: fixed 2-row grid that flows into columns so it scrolls horizontally
+// instead of wrapping into many tall rows. Desktop: same minimal chip, spread
+// across one evenly-spaced row (display swaps grid -> flex at sm:).
+const itemClasses =
+  "flex w-[4.5rem] shrink-0 snap-start flex-col items-center gap-1.5 text-center sm:w-auto sm:flex-1";
 
-const itemClasses = "flex shrink-0 snap-start flex-col items-center gap-2 px-5 py-1 text-center sm:flex-1 sm:px-4";
+function CategoryChip({ slug }: { slug: string }) {
+  const accent = getCategoryAccent(slug);
+  return (
+    <span className={cn("flex size-11 shrink-0 items-center justify-center rounded-full sm:size-12", accent.bg)}>
+      <CategoryIcon slug={slug} className={cn("size-5", accent.fg)} strokeWidth={1.5} />
+    </span>
+  );
+}
 
 export function CategoryStrip({ categories, loading }: CategoryStripProps) {
   return (
-    <section className="mt-6 pb-5 sm:mt-8 sm:pb-8">
+    <section className="mt-5 pb-4 sm:mt-8 sm:pb-8">
       <div className="mx-auto max-w-7xl px-4">
-        <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory divide-x divide-border overflow-x-auto px-4 [mask-image:linear-gradient(to_right,black_calc(100%-28px),transparent)] sm:mx-0 sm:snap-none sm:overflow-visible sm:px-0 sm:[mask-image:none]">
+        <div
+          className="no-scrollbar -mx-4 grid auto-cols-[4.5rem] grid-flow-col grid-rows-2 gap-x-3 gap-y-2.5 overflow-x-auto px-4 [mask-image:linear-gradient(to_right,black_calc(100%-28px),transparent)] sm:mx-0 sm:flex sm:items-start sm:gap-x-2 sm:gap-y-0 sm:overflow-visible sm:px-0 sm:[mask-image:none]"
+        >
           {loading
-            ? Array.from({ length: 6 }).map((_, i) => (
+            ? Array.from({ length: 16 }).map((_, i) => (
                 <div key={i} className={itemClasses}>
-                  <Skeleton className="size-9 rounded-md" />
-                  <Skeleton className="h-3.5 w-16" />
-                  <Skeleton className="h-3 w-12" />
+                  <Skeleton className="size-11 shrink-0 rounded-full sm:size-12" />
+                  <Skeleton className="h-2.5 w-10" />
                 </div>
               ))
             : categories.map((cat) => (
-                <Link key={cat.id} to={`/category/${cat.slug}`} className={cn(itemClasses, "transition-opacity hover:opacity-70")}>
-                  <CategoryIcon
-                    slug={cat.slug}
-                    className={cn("size-9", accentBySlug[cat.slug] ?? "text-foreground")}
-                    strokeWidth={1.75}
-                  />
-                  <span className="line-clamp-2 min-h-9 max-w-[6.5rem] text-sm leading-tight font-semibold text-foreground">
+                <Link
+                  key={cat.id}
+                  to={`/category/${cat.slug}`}
+                  className={cn(itemClasses, "transition-opacity hover:opacity-70")}
+                >
+                  <CategoryChip slug={cat.slug} />
+                  <span className="line-clamp-1 w-full text-[11px] font-medium leading-tight text-foreground sm:text-xs">
                     {cat.name}
-                  </span>
-                  <span className="text-xs font-medium text-blue-500">
-                    {cat.total_products_count.toLocaleString()} items
                   </span>
                 </Link>
               ))}
           {!loading && (
-            <Link to="/search" className={cn(itemClasses, "justify-center transition-opacity hover:opacity-70")}>
-              <MoreHorizontal className="size-9 text-violet-400" strokeWidth={1.75} />
-              <span className="text-sm font-semibold text-foreground">More</span>
-            </Link>
+            <CategoriesSheet
+              trigger={
+                <button type="button" className={cn(itemClasses, "transition-opacity hover:opacity-70")}>
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-muted sm:size-12">
+                    <MoreHorizontal className="size-5 text-muted-foreground" strokeWidth={1.5} />
+                  </span>
+                  <span className="text-[11px] font-medium leading-tight text-foreground sm:text-xs">More</span>
+                </button>
+              }
+            />
           )}
         </div>
       </div>
