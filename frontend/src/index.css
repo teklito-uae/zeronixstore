@@ -175,6 +175,14 @@
   }
 }
 
+/* Shop-by-brand marquee: track is the item list rendered twice, so translating
+   exactly -50% loops seamlessly regardless of how wide the content actually is. */
+@keyframes brand-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
 /* Tiptap's Placeholder extension marks the empty node with this class/attr but ships no CSS of its own. */
 .tiptap p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);

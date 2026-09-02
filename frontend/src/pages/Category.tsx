@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { SlidersHorizontal } from "lucide-react";
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetFooter, SheetTitle } from "@/components/ui/sheet";
 import { ProductCard, ProductCardSkeleton } from "@/components/product/ProductCard";
 import { ProductFilters } from "@/components/product/ProductFilters";
 import { ProductSortSelect } from "@/components/product/ProductSortSelect";
@@ -35,8 +35,20 @@ export default function Category() {
   const { slug = "" } = useParams<{ slug: string }>();
   const [category, setCategory] = useState<CategoryType | null>(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const gridTopRef = useRef<HTMLDivElement>(null);
+  const isFirstPageRender = useRef(true);
 
   const listing = useProductListing({ category: slug, perPage: 24 });
+
+  // Scroll the grid back into view on page change so paging doesn't leave the
+  // user staring at the same scroll position with all-new products below the fold.
+  useEffect(() => {
+    if (isFirstPageRender.current) {
+      isFirstPageRender.current = false;
+      return;
+    }
+    gridTopRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [listing.page]);
 
   useEffect(() => {
     let cancelled = false;
@@ -87,7 +99,7 @@ export default function Category() {
       )}
 
       <div className="grid gap-8 lg:grid-cols-[220px_1fr]">
-        <aside className="hidden lg:block">
+        <aside className="hidden lg:block lg:sticky lg:top-20 lg:h-fit lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto lg:pb-4">
           <ProductFilters
             brands={listing.brands}
             selectedBrands={listing.selectedBrands}
@@ -101,18 +113,9 @@ export default function Category() {
           />
         </aside>
 
-        <div className="flex min-w-0 flex-col gap-5">
-          <div className="flex items-center justify-between gap-3">
-            <Button variant="outline" size="sm" className="lg:hidden" onClick={() => setFiltersOpen(true)}>
-              <SlidersHorizontal className="size-3.5" />
-              Filters
-              {listing.activeFilterCount > 0 && (
-                <Badge className="ml-1 size-4 border-none p-0 text-[10px]">{listing.activeFilterCount}</Badge>
-              )}
-            </Button>
-            <div className="ml-auto">
-              <ProductSortSelect value={listing.sort} onChange={listing.setSort} />
-            </div>
+        <div ref={gridTopRef} className="flex min-w-0 scroll-mt-20 flex-col gap-5">
+          <div className="flex items-center justify-end gap-3">
+            <ProductSortSelect value={listing.sort} onChange={listing.setSort} />
           </div>
 
           {listing.loading ? (
@@ -147,12 +150,28 @@ export default function Category() {
         </div>
       </div>
 
+      {/* Floating filter trigger — mobile/tablet only, sits above the tab bar. */}
+      <div className="fixed inset-x-0 bottom-[88px] z-30 flex justify-center px-4 lg:hidden">
+        <Button
+          size="lg"
+          className="gap-2 rounded-full px-5 shadow-lg shadow-black/15"
+          onClick={() => setFiltersOpen(true)}
+        >
+          <SlidersHorizontal className="size-4" />
+          Filters
+          {listing.activeFilterCount > 0 && (
+            <Badge className="ml-0.5 size-5 border-none bg-primary-foreground/20 p-0 text-[11px] text-primary-foreground">
+              {listing.activeFilterCount}
+            </Badge>
+          )}
+        </Button>
+      </div>
+
       <Sheet open={filtersOpen} onOpenChange={setFiltersOpen}>
-        <SheetContent side="left" className="overflow-y-auto p-0">
-          <SheetHeader className="border-b border-border">
-            <SheetTitle>Filters</SheetTitle>
-          </SheetHeader>
-          <div className="p-4">
+        <SheetContent side="bottom" className="flex max-h-[85vh] flex-col gap-0 rounded-t-2xl p-0">
+          <SheetTitle className="sr-only">Filters</SheetTitle>
+          <div className="mx-auto mt-2.5 h-1.5 w-10 shrink-0 rounded-full bg-border" />
+          <div className="min-h-0 flex-1 overflow-y-auto p-4 pt-3">
             <ProductFilters
               brands={listing.brands}
               selectedBrands={listing.selectedBrands}
@@ -165,6 +184,11 @@ export default function Category() {
               activeFilterCount={listing.activeFilterCount}
             />
           </div>
+          <SheetFooter className="shrink-0 border-t border-border bg-background p-4">
+            <Button className="w-full" onClick={() => setFiltersOpen(false)}>
+              Show {listing.meta?.total ?? ""} results
+            </Button>
+          </SheetFooter>
         </SheetContent>
       </Sheet>
     </div>

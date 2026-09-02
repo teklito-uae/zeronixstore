@@ -37,12 +37,12 @@ export function ProductCarousel({
     <section
       ref={sectionRef}
       className={cn(
-        "relative py-8 sm:py-14",
+        "relative py-6 sm:py-10",
         isDeal && "border-y border-orange-100 bg-gradient-to-b from-orange-50 via-amber-50/40 to-transparent",
       )}
     >
       <Carousel opts={{ align: "start" }} className="relative mx-auto max-w-7xl px-4">
-        <div className="mb-6 flex items-end justify-between gap-4">
+        <div className="mb-5 flex items-end justify-between gap-4">
           <div>
             {isDeal && (
               <span className="mb-1 inline-flex items-center gap-1.5 rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold uppercase tracking-widest text-orange-600">
@@ -69,17 +69,17 @@ export function ProductCarousel({
           </div>
         </div>
 
-        <CarouselContent className="-ml-4">
+        <CarouselContent className="-ml-3 sm:-ml-4">
           {loading
-            ? Array.from({ length: 5 }).map((_, i) => (
-                <CarouselItem key={i} className="basis-1/2 pl-4 sm:basis-1/4 lg:basis-1/5">
+            ? Array.from({ length: 6 }).map((_, i) => (
+                <CarouselItem key={i} className="basis-1/2 pl-3 sm:basis-1/3 sm:pl-4 md:basis-1/4 lg:basis-1/6">
                   <ProductCardSkeleton />
                 </CarouselItem>
               ))
             : products.map((product) => (
                 <CarouselItem
                   key={product.id}
-                  className="basis-1/2 pl-4 sm:basis-1/4 lg:basis-1/5"
+                  className="basis-1/2 pl-3 sm:basis-1/3 sm:pl-4 md:basis-1/4 lg:basis-1/6"
                 >
                   <ProductCard product={product} />
                 </CarouselItem>

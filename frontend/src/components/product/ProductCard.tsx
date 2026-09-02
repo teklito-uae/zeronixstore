@@ -40,7 +40,11 @@ export function ProductCard({ product }: ProductCardProps) {
   function handleWishlist(e: MouseEvent) {
     e.preventDefault();
     toggle(product);
-    toast(wishlisted ? "Removed from wishlist" : "Added to wishlist", { description: product.name });
+    if (wishlisted) {
+      toast("Removed from wishlist", { description: product.name });
+    } else {
+      toast.success("Added to wishlist", { description: product.name });
+    }
   }
 
   function handleAddToCart(e: MouseEvent) {

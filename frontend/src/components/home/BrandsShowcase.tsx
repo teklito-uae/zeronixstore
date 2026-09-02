@@ -1,65 +1,64 @@
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
-interface BrandLogo {
+interface BrandItem {
   name: string;
   slug: string;
 }
 
-// Curated, not DB-driven — the real imported Brand rows include scrape
-// artifacts ("Microless", "Generic") and long-tail accessory brands with no
-// available logo asset, which would look broken in a logo wall. This list is
-// real, recognizable brands with a real logo file in public/brands/
-// (sourced from Simple Icons, CC0-licensed, downloaded to public/brands/).
-const brands: BrandLogo[] = [
-  { name: "Lenovo", slug: "lenovo" },
-  { name: "ASUS", slug: "asus" },
-  { name: "HP", slug: "hp" },
-  { name: "Samsung", slug: "samsung" },
-  { name: "Acer", slug: "acer" },
-  { name: "Apple", slug: "apple" },
-  { name: "Dell", slug: "dell" },
-  { name: "Intel", slug: "intel" },
-  { name: "AMD", slug: "amd" },
-  { name: "MSI", slug: "msi" },
-  { name: "LG", slug: "lg" },
-  { name: "NVIDIA", slug: "nvidia" },
-  { name: "Razer", slug: "razer" },
-  { name: "Corsair", slug: "corsair" },
-  { name: "SteelSeries", slug: "steelseries" },
-  { name: "HyperX", slug: "hyperx" },
-  { name: "NZXT", slug: "nzxt" },
-  { name: "Synology", slug: "synology" },
-  { name: "Sony", slug: "sony" },
-  { name: "Huawei", slug: "huawei" },
-  { name: "Xiaomi", slug: "xiaomi" },
-  { name: "Seagate", slug: "seagate" },
-  { name: "Redragon", slug: "redragon" },
-  { name: "Oppo", slug: "oppo" },
+// Text-only, no logo assets to source/host — bold names read as clean at
+// marquee speed and never break if a brand's mark changes.
+const brandNames = [
+  "Lenovo", "ASUS", "HP", "Samsung", "Acer", "Apple", "Dell", "Intel",
+  "AMD", "MSI", "LG", "NVIDIA", "Razer", "Corsair", "SteelSeries", "HyperX",
+  "NZXT", "Synology", "Sony", "Huawei", "Xiaomi", "Seagate", "Redragon", "Oppo",
 ];
+
+const brands: BrandItem[] = brandNames.map((name) => ({
+  name,
+  slug: name.toLowerCase().replace(/\s+/g, "-"),
+}));
+
+const mid = Math.ceil(brands.length / 2);
+const rowA = brands.slice(0, mid);
+const rowB = brands.slice(mid);
+
+function MarqueeRow({ items, reverse, duration }: { items: BrandItem[]; reverse?: boolean; duration: number }) {
+  // Item list rendered twice back-to-back — translating the track exactly
+  // -50% loops seamlessly no matter how wide the content ends up being.
+  const track = [...items, ...items];
+
+  return (
+    <div className="group/row overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+      <div
+        className={cn(
+          "flex w-max items-center gap-2 [animation-duration:var(--marquee-d)] [animation-iteration-count:infinite] [animation-name:brand-marquee] [animation-timing-function:linear] group-hover/row:[animation-play-state:paused] motion-reduce:[animation-play-state:paused] sm:gap-2.5",
+          reverse && "[animation-direction:reverse]",
+        )}
+        style={{ ["--marquee-d" as string]: `${duration}s` }}
+      >
+        {track.map((b, i) => (
+          <Link
+            key={`${b.slug}-${i}`}
+            to={`/brand/${b.slug}`}
+            className="shrink-0 whitespace-nowrap rounded-full border border-border bg-muted/40 px-4 py-1.5 text-sm font-bold tracking-tight text-foreground transition-colors hover:border-primary/30 hover:bg-accent hover:text-primary sm:px-5 sm:py-2 sm:text-base"
+          >
+            {b.name}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export function BrandsShowcase() {
   return (
-    <section className="border-y border-border bg-background py-10 sm:py-14">
+    <section className="border-y border-border bg-background py-6 sm:py-8">
       <div className="mx-auto max-w-7xl px-4">
-        <h2 className="mb-8 text-center text-xl font-semibold text-foreground sm:text-2xl">
-          Shop By Brands
-        </h2>
-        <div className="grid grid-cols-3 gap-x-6 gap-y-8 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
-          {brands.map((b) => (
-            <Link
-              key={b.slug}
-              to={`/brand/${b.slug}`}
-              aria-label={b.name}
-              className="flex h-12 items-center justify-center p-2 opacity-90 transition-opacity hover:opacity-100 sm:h-14"
-            >
-              <img
-                src={`/brands/${b.slug}.svg`}
-                alt={b.name}
-                className="h-full max-h-9 w-auto max-w-[140px] object-contain sm:max-h-11"
-                loading="lazy"
-              />
-            </Link>
-          ))}
+        <h2 className="mb-4 text-lg font-semibold text-foreground sm:mb-5 sm:text-xl">Shop By Brand</h2>
+        <div className="flex flex-col gap-2 sm:gap-2.5">
+          <MarqueeRow items={rowA} duration={26} />
+          <MarqueeRow items={rowB} duration={30} reverse />
         </div>
       </div>
     </section>

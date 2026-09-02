@@ -166,7 +166,11 @@ function ProductDetailView({ product }: { product: Product }) {
 
   function handleWishlist() {
     toggle(product);
-    toast(wishlisted ? "Removed from wishlist" : "Added to wishlist", { description: product.name });
+    if (wishlisted) {
+      toast("Removed from wishlist", { description: product.name });
+    } else {
+      toast.success("Added to wishlist", { description: product.name });
+    }
   }
 
   function handleShare() {

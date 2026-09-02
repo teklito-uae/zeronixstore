@@ -56,12 +56,12 @@ export function FAQSection() {
   };
 
   return (
-    <section className="py-8 sm:py-14">
+    <section className="py-6 sm:py-10">
       {/* Structured data for AI/LLM answer engines and rich-result search snippets. */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       <div className="mx-auto max-w-4xl px-4">
-        <div className="mb-8 flex flex-col items-center gap-2 text-center">
+        <div className="mb-6 flex flex-col items-center gap-2 text-center sm:mb-8">
           <span className="flex size-11 items-center justify-center rounded-full bg-accent text-primary">
             <HelpCircle className="size-5" strokeWidth={1.75} />
           </span>

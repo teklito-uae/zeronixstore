@@ -17,9 +17,9 @@ export function BlogCarousel() {
   if (!loading && posts.length === 0) return null;
 
   return (
-    <section ref={ref} className="relative py-8 sm:py-14">
+    <section ref={ref} className="relative py-6 sm:py-10">
       <Carousel opts={{ align: "start" }} className="relative mx-auto max-w-7xl px-4">
-        <div className="mb-6 flex items-end justify-between gap-4">
+        <div className="mb-5 flex items-end justify-between gap-4">
           <div>
             <span className="mb-1 inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-semibold uppercase tracking-widest text-primary">
               <Newspaper className="size-3.5" />

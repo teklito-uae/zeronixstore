@@ -34,7 +34,7 @@ const popularSearches: { label: string; href: string }[] = [
 
 export function PopularSearches() {
   return (
-    <section className="py-8 sm:py-14">
+    <section className="py-6 sm:py-10">
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-5 flex items-center gap-2">
           <TrendingUp className="size-4 text-primary" strokeWidth={1.75} />

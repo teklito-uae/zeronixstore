@@ -4,10 +4,8 @@ import { BrandsShowcase } from "@/components/home/BrandsShowcase";
 import { CategoryStrip } from "@/components/home/CategoryStrip";
 import { FAQSection } from "@/components/home/FAQSection";
 import { HeroBanner } from "@/components/home/HeroBanner";
-import { Newsletter } from "@/components/home/Newsletter";
 import { PopularSearches } from "@/components/home/PopularSearches";
 import { ProductCarousel } from "@/components/home/ProductCarousel";
-import { StatsBar } from "@/components/home/StatsBar";
 import { fetchCategories } from "@/features/products/api";
 import type { Category } from "@/features/products/types";
 import { useLazyProducts } from "@/features/products/useLazyProducts";
@@ -58,7 +56,6 @@ export default function Home() {
         sectionRef={monitors.ref}
       />
       <BrandsShowcase />
-      <StatsBar />
       <ProductCarousel
         title="Graphics Cards & Components"
         description="Upgrade parts for your next build"
@@ -86,7 +83,6 @@ export default function Home() {
       <BlogCarousel />
       <FAQSection />
       <PopularSearches />
-      <Newsletter />
     </>
   );
 }

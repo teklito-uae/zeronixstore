@@ -15,7 +15,12 @@ export function Layout() {
       </main>
       <Footer />
       <MobileTabBar />
-      <Toaster position="top-center" />
+      <Toaster
+        position="bottom-right"
+        duration={2500}
+        offset={{ bottom: 24, right: 24 }}
+        mobileOffset={{ bottom: 140, right: 16 }}
+      />
     </div>
   );
 }

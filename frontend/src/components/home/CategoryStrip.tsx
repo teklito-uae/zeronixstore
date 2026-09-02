@@ -27,7 +27,7 @@ const itemClasses = "flex shrink-0 snap-start flex-col items-center gap-2 px-5 p
 
 export function CategoryStrip({ categories, loading }: CategoryStripProps) {
   return (
-    <section className="mt-8 pb-6 sm:mt-12 sm:pb-10">
+    <section className="mt-6 pb-5 sm:mt-8 sm:pb-8">
       <div className="mx-auto max-w-7xl px-4">
         <div className="no-scrollbar -mx-4 flex snap-x snap-mandatory divide-x divide-border overflow-x-auto px-4 [mask-image:linear-gradient(to_right,black_calc(100%-28px),transparent)] sm:mx-0 sm:snap-none sm:overflow-visible sm:px-0 sm:[mask-image:none]">
           {loading
