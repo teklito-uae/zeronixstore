@@ -91,6 +91,42 @@ class ZeronixCatalogSeeder extends Seeder
                     'Webcams & Streaming' => ['webcams-streaming', 'Webcams & Streaming Gear UAE | Zeronix', 'Webcams, microphones and streaming gear for content creators in the UAE.', 'webcam dubai, streaming gear uae, microphone dubai', 'https://images.unsplash.com/photo-1623949556303-b0d17d198863?w=800&q=80'],
                 ],
             ],
+            'Networking' => [
+                'slug' => 'networking',
+                'description' => 'Routers, mesh WiFi and network adapters',
+                'image' => 'https://images.unsplash.com/photo-1606904825846-647eb07f5be2?w=800&q=80',
+                'meta_title' => 'Networking UAE — Routers & WiFi | Zeronix',
+                'meta_description' => 'WiFi routers, mesh systems and network adapters delivered across the UAE.',
+                'search_keywords' => 'wifi router dubai, mesh wifi uae, network switch dubai, wifi extender uae',
+                'children' => [
+                    'Routers' => ['routers', 'WiFi Routers UAE | Zeronix', 'WiFi routers and mesh systems for fast, reliable home and office networks across the UAE.', 'wifi router dubai, mesh router uae, gaming router dubai', 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?w=800&q=80'],
+                    'Network Adapters' => ['network-adapters', 'Network Adapters UAE | Zeronix', 'USB and PCIe WiFi and ethernet adapters, shipped across the UAE.', 'wifi adapter dubai, ethernet adapter uae, usb network adapter dubai'],
+                ],
+            ],
+            'Printers & Scanners' => [
+                'slug' => 'printers-scanners',
+                'description' => 'Inkjet, laser printers and scanners',
+                'image' => 'https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=800&q=80',
+                'meta_title' => 'Printers & Scanners UAE | Zeronix',
+                'meta_description' => 'Inkjet and laser printers, all-in-one printers and scanners delivered across the UAE.',
+                'search_keywords' => 'printer dubai, laser printer uae, scanner dubai, all in one printer uae',
+                'children' => [
+                    'Laser Printers' => ['laser-printers', 'Laser Printers UAE | Zeronix', 'Laser printers for home and office use, shipped across the UAE.', 'laser printer dubai, hp laser printer uae, office printer dubai'],
+                    'All-in-One Printers' => ['all-in-one-printers', 'All-in-One Printers UAE | Zeronix', 'Print, scan and copy all-in-one printers delivered across the UAE.', 'all in one printer dubai, wireless printer uae'],
+                ],
+            ],
+            'Gaming Chairs & Desks' => [
+                'slug' => 'gaming-chairs-desks',
+                'description' => 'Ergonomic gaming chairs and desks',
+                'image' => 'https://images.unsplash.com/photo-1616627561950-9f746e330187?w=800&q=80',
+                'meta_title' => 'Gaming Chairs & Desks UAE | Zeronix',
+                'meta_description' => 'Ergonomic gaming chairs and height-adjustable desks delivered across the UAE.',
+                'search_keywords' => 'gaming chair dubai, gaming desk uae, ergonomic chair dubai, standing desk uae',
+                'children' => [
+                    'Gaming Chairs' => ['gaming-chairs', 'Gaming Chairs UAE | Zeronix', 'Ergonomic gaming chairs from top brands, shipped across the UAE.', 'gaming chair dubai, racing chair uae, ergonomic gaming chair dubai'],
+                    'Gaming Desks' => ['gaming-desks', 'Gaming Desks UAE | Zeronix', 'Height-adjustable and RGB gaming desks delivered across the UAE.', 'gaming desk dubai, standing desk uae, rgb desk dubai'],
+                ],
+            ],
         ];
 
         foreach ($taxonomy as $name => $def) {
