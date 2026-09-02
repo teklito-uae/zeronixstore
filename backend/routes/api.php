@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\VariantController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AddressController;
@@ -47,6 +48,11 @@ Route::middleware('auth:sanctum')->group(function () {
     // Admin routes
     Route::middleware('admin')->prefix('admin')->group(function() {
         Route::get('/products', [ProductController::class, 'adminIndex']);
+        Route::get('/products/{product}', [ProductController::class, 'adminShow']);
+        Route::post('/products/bulk-delete', [ProductController::class, 'destroyMany']);
+        Route::post('/products/{product}/variants', [VariantController::class, 'store']);
+        Route::put('/products/{product}/variants/{variant}', [VariantController::class, 'update']);
+        Route::delete('/products/{product}/variants/{variant}', [VariantController::class, 'destroy']);
         Route::apiResource('products', ProductController::class)->except(['index', 'show']);
         Route::apiResource('categories', CategoryController::class)->except(['index', 'show']);
 

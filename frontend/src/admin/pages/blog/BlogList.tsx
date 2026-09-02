@@ -4,6 +4,7 @@ import { ImageOff, Loader2, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { deleteBlogPost, listBlogPosts } from "@/admin/api/blog";
 import { ApiError } from "@/admin/api/client";
+import { usePageActions, usePageFooter } from "@/admin/components/AdminShell";
 import { Pager } from "@/admin/components/Pager";
 import { ConfirmDialog } from "@/admin/components/ConfirmDialog";
 import { BlogPostStatusBadge } from "@/admin/components/StatusBadge";
@@ -54,22 +55,24 @@ export default function BlogList() {
     }
   }
 
+  usePageActions(
+    <Button asChild>
+      <Link to="/admin/blog/new">
+        <Plus />
+        New article
+      </Link>
+    </Button>,
+  );
+
+  usePageFooter(
+    result && <Pager currentPage={result.current_page} lastPage={result.last_page} onPageChange={setPage} />,
+  );
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-2xl font-semibold">Zeronix Journal</h1>
-          <p className="text-sm text-muted-foreground">
-            {result ? `${result.total} article${result.total === 1 ? "" : "s"}` : "Loading…"}
-          </p>
-        </div>
-        <Button asChild>
-          <Link to="/admin/blog/new">
-            <Plus />
-            New article
-          </Link>
-        </Button>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        {result ? `${result.total} article${result.total === 1 ? "" : "s"}` : "Loading…"}
+      </p>
 
       <form onSubmit={handleSearchSubmit} className="flex max-w-sm gap-2">
         <div className="relative flex-1">
@@ -158,10 +161,6 @@ export default function BlogList() {
           </Table>
         </CardContent>
       </Card>
-
-      {result && (
-        <Pager currentPage={result.current_page} lastPage={result.last_page} onPageChange={setPage} />
-      )}
     </div>
   );
 }

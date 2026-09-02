@@ -9,7 +9,7 @@ const MAX_PAGES = 20;
 
 export async function fetchDashboardStats(): Promise<DashboardStats> {
   const [productsPage, firstOrdersPage] = await Promise.all([
-    listProducts(1),
+    listProducts({ page: 1 }),
     listOrders(1),
   ]);
 

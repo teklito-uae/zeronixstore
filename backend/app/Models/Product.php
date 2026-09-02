@@ -16,7 +16,7 @@ class Product extends Model
     protected $fillable = [
         'name', 'slug', 'description', 'category_id', 'brand', 'brand_id',
         'price', 'sale_price', 'cpu', 'gpu', 'ram', 'storage',
-        'specs', 'images', 'featured', 'status',
+        'specs', 'images', 'featured', 'status', 'stock',
         'badge', 'badge_color',
         'meta_title', 'meta_description', 'search_keywords',
     ];
@@ -31,6 +31,7 @@ class Product extends Model
             'featured' => 'boolean',
             'price' => 'decimal:2',
             'sale_price' => 'decimal:2',
+            'stock' => 'integer',
         ];
     }
 

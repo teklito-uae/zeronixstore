@@ -4,6 +4,7 @@ import { ImageOff, Loader2, Save } from "lucide-react";
 import { toast } from "sonner";
 import { createBlogPost, listBlogPosts, updateBlogPost } from "@/admin/api/blog";
 import { ApiError } from "@/admin/api/client";
+import { usePageActions } from "@/admin/components/AdminShell";
 import { RichTextEditor } from "@/admin/components/RichTextEditor";
 import type { BlogPostFormValues } from "@/admin/types";
 import { Button } from "@/components/ui/button";
@@ -123,6 +124,18 @@ export default function BlogForm() {
     };
   }, [newCoverPreview]);
 
+  usePageActions(
+    <>
+      <Button type="button" variant="outline" onClick={() => navigate("/admin/blog")}>
+        Cancel
+      </Button>
+      <Button type="submit" form="blog-form" disabled={submitting || loading}>
+        {submitting ? <Loader2 className="animate-spin" /> : <Save />}
+        {isEdit ? "Save changes" : "Publish article"}
+      </Button>
+    </>,
+  );
+
   if (loading) {
     return (
       <div className="flex flex-1 items-center justify-center py-24">
@@ -136,16 +149,11 @@ export default function BlogForm() {
 
   return (
     <div className="mx-auto flex max-w-3xl flex-col gap-6">
-      <div>
-        <h1 className="font-heading text-2xl font-semibold">
-          {isEdit ? "Edit article" : "New article"}
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          {isEdit ? "Update this Zeronix Journal article." : "Publish a new article to the Zeronix Journal."}
-        </p>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        {isEdit ? "Update this Zeronix Journal article." : "Publish a new article to the Zeronix Journal."}
+      </p>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <form id="blog-form" onSubmit={handleSubmit} className="flex flex-col gap-6">
         <Card>
           <CardHeader>
             <CardTitle>Basics</CardTitle>
@@ -260,16 +268,6 @@ export default function BlogForm() {
             </div>
           </CardContent>
         </Card>
-
-        <div className="flex justify-end gap-2">
-          <Button type="button" variant="outline" onClick={() => navigate("/admin/blog")}>
-            Cancel
-          </Button>
-          <Button type="submit" disabled={submitting}>
-            {submitting ? <Loader2 className="animate-spin" /> : <Save />}
-            {isEdit ? "Save changes" : "Publish article"}
-          </Button>
-        </div>
       </form>
     </div>
   );

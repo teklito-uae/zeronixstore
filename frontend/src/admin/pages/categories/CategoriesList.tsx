@@ -9,6 +9,7 @@ import {
   type CategoryFormValues,
 } from "@/admin/api/categories";
 import { ApiError } from "@/admin/api/client";
+import { usePageActions } from "@/admin/components/AdminShell";
 import { ConfirmDialog } from "@/admin/components/ConfirmDialog";
 import type { Category } from "@/admin/types";
 import { Button } from "@/components/ui/button";
@@ -120,85 +121,83 @@ export default function CategoriesList() {
 
   const parentOptions = flat.filter((c) => c.id !== editing?.id);
 
+  usePageActions(
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DialogTrigger asChild>
+        <Button onClick={openCreate}>
+          <Plus />
+          New category
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{editing ? "Edit category" : "New category"}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="cat-name">Name</Label>
+            <Input
+              id="cat-name"
+              required
+              value={values.name}
+              onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label>Parent category</Label>
+            <Select
+              value={values.parent_id || "none"}
+              onValueChange={(v) => setValues((s) => ({ ...s, parent_id: v === "none" ? "" : v }))}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="None (top-level)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None (top-level)</SelectItem>
+                {parentOptions.map((cat) => (
+                  <SelectItem key={cat.id} value={String(cat.id)}>
+                    {"—".repeat(cat.depth)} {cat.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="cat-description">Description</Label>
+            <Textarea
+              id="cat-description"
+              rows={3}
+              value={values.description}
+              onChange={(e) => setValues((v) => ({ ...v, description: e.target.value }))}
+            />
+          </div>
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="cat-image">Image {editing && "(leave empty to keep current)"}</Label>
+            <Input
+              id="cat-image"
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={(e) => setValues((v) => ({ ...v, image: e.target.files?.[0] ?? null }))}
+            />
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={submitting}>
+              {submitting && <Loader2 className="animate-spin" />}
+              {editing ? "Save changes" : "Create category"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>,
+  );
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="font-heading text-2xl font-semibold">Categories</h1>
-          <p className="text-sm text-muted-foreground">Organize the storefront's category tree.</p>
-        </div>
-        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={openCreate}>
-              <Plus />
-              New category
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editing ? "Edit category" : "New category"}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="cat-name">Name</Label>
-                <Input
-                  id="cat-name"
-                  required
-                  value={values.name}
-                  onChange={(e) => setValues((v) => ({ ...v, name: e.target.value }))}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Parent category</Label>
-                <Select
-                  value={values.parent_id || "none"}
-                  onValueChange={(v) => setValues((s) => ({ ...s, parent_id: v === "none" ? "" : v }))}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="None (top-level)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="none">None (top-level)</SelectItem>
-                    {parentOptions.map((cat) => (
-                      <SelectItem key={cat.id} value={String(cat.id)}>
-                        {"—".repeat(cat.depth)} {cat.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="cat-description">Description</Label>
-                <Textarea
-                  id="cat-description"
-                  rows={3}
-                  value={values.description}
-                  onChange={(e) => setValues((v) => ({ ...v, description: e.target.value }))}
-                />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="cat-image">Image {editing && "(leave empty to keep current)"}</Label>
-                <Input
-                  id="cat-image"
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setValues((v) => ({ ...v, image: e.target.files?.[0] ?? null }))}
-                />
-              </div>
-              <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={submitting}>
-                  {submitting && <Loader2 className="animate-spin" />}
-                  {editing ? "Save changes" : "Create category"}
-                </Button>
-              </DialogFooter>
-            </form>
-          </DialogContent>
-        </Dialog>
-      </div>
+      <p className="text-sm text-muted-foreground">Organize the storefront's category tree.</p>
 
       <Card>
         <CardContent className="p-0">

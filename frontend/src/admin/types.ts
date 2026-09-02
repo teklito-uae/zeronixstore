@@ -29,6 +29,24 @@ export interface Category {
 
 export type ProductStatus = "active" | "draft";
 
+export interface Variant {
+  id: number;
+  product_id: number;
+  sku: string;
+  name: string;
+  price: string;
+  stock: number;
+  attributes: Record<string, string> | null;
+}
+
+export interface VariantFormValues {
+  sku: string;
+  name: string;
+  price: string;
+  stock: string;
+  attributes: { key: string; value: string }[];
+}
+
 export interface Product {
   id: number;
   name: string;
@@ -45,6 +63,9 @@ export interface Product {
   storage: string | null;
   featured: boolean;
   status: ProductStatus;
+  stock: number;
+  variants_sum_stock: number | null;
+  variants?: Variant[];
   badge: string | null;
   badge_color: string | null;
   primary_image_url: string | null;
@@ -65,6 +86,7 @@ export interface ProductFormValues {
   storage: string;
   featured: boolean;
   status: ProductStatus;
+  stock: string;
   badge: string;
   badge_color: string;
 }

@@ -197,7 +197,8 @@ class ProductController extends Controller
     // Admin methods
     public function adminIndex(Request $request)
     {
-        $query = Product::with('category');
+        $query = Product::with(['category', 'imagesGallery'])->withSum('variants', 'stock');
+
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
             $query->where(function($q) use ($searchTerm) {
@@ -205,8 +206,35 @@ class ProductController extends Controller
                   ->orWhereHas('brand', fn($bq) => $bq->where('name', 'like', "%{$searchTerm}%"));
             });
         }
-        return response()->json($query->latest()->paginate(20));
+
+        switch ($request->query('tab')) {
+            case 'draft':
+                $query->where('status', 'draft');
+                break;
+            case 'promoted':
+                $query->where('featured', true);
+                break;
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->query('status'));
+        }
+
+        if ($request->filled('date')) {
+            $query->whereDate('created_at', $request->query('date'));
+        }
+
+        $perPage = min((int) $request->query('per_page', 20), 100);
+
+        return response()->json($query->latest()->paginate($perPage));
     }
+
+    public function adminShow(Product $product)
+    {
+        $product->load(['category', 'imagesGallery', 'variants']);
+        return response()->json($product);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -222,12 +250,13 @@ class ProductController extends Controller
             'storage' => 'nullable|string',
             'featured' => 'boolean',
             'status' => 'in:active,draft',
+            'stock' => 'nullable|integer|min:0',
             'badge' => 'nullable|string|max:50',
             'badge_color' => 'nullable|string|max:50'
         ]);
 
         $validated['slug'] = Str::slug($validated['name']);
-        
+
         $product = Product::create($validated);
         return response()->json($product, 201);
     }
@@ -247,6 +276,7 @@ class ProductController extends Controller
             'storage' => 'nullable|string',
             'featured' => 'boolean',
             'status' => 'in:active,draft',
+            'stock' => 'nullable|integer|min:0',
             'badge' => 'nullable|string|max:50',
             'badge_color' => 'nullable|string|max:50'
         ]);
@@ -262,6 +292,18 @@ class ProductController extends Controller
     public function destroy(Product $product)
     {
         $product->delete();
+        return response()->json(null, 204);
+    }
+
+    public function destroyMany(Request $request)
+    {
+        $validated = $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'integer|exists:products,id',
+        ]);
+
+        Product::whereIn('id', $validated['ids'])->delete();
+
         return response()->json(null, 204);
     }
 }

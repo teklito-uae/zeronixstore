@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { listOrders, updateOrder } from "@/admin/api/orders";
+import { usePageBreadcrumbLabel } from "@/admin/components/AdminShell";
 import { OrderStatusBadge, PaymentStatusBadge } from "@/admin/components/StatusBadge";
 import type { Order, OrderStatus, PaymentStatus } from "@/admin/types";
 import { formatPrice } from "@/lib/format";
@@ -91,6 +92,8 @@ export default function OrderDetail() {
     }
   }
 
+  usePageBreadcrumbLabel(order?.order_number ?? null);
+
   if (loading) {
     return (
       <div className="flex flex-1 items-center justify-center py-24">
@@ -121,19 +124,9 @@ export default function OrderDetail() {
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center gap-3">
-        <Button variant="ghost" size="icon-sm" asChild>
-          <Link to="/admin/orders">
-            <ArrowLeft />
-          </Link>
-        </Button>
-        <div>
-          <h1 className="font-heading text-2xl font-semibold">{order.order_number}</h1>
-          <p className="text-sm text-muted-foreground">
-            Placed {new Date(order.created_at).toLocaleString()}
-          </p>
-        </div>
-      </div>
+      <p className="text-sm text-muted-foreground">
+        Placed {new Date(order.created_at).toLocaleString()}
+      </p>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <Card>
