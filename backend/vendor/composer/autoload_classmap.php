@@ -15,6 +15,7 @@ return array(
     'App\\Http\\Controllers\\Controller' => $baseDir . '/app/Http/Controllers/Controller.php',
     'App\\Http\\Controllers\\OrderController' => $baseDir . '/app/Http/Controllers/OrderController.php',
     'App\\Http\\Controllers\\ProductController' => $baseDir . '/app/Http/Controllers/ProductController.php',
+    'App\\Http\\Controllers\\VariantController' => $baseDir . '/app/Http/Controllers/VariantController.php',
     'App\\Http\\Middleware\\CacheResponse' => $baseDir . '/app/Http/Middleware/CacheResponse.php',
     'App\\Http\\Middleware\\EnsureJsonResponse' => $baseDir . '/app/Http/Middleware/EnsureJsonResponse.php',
     'App\\Http\\Middleware\\IsAdmin' => $baseDir . '/app/Http/Middleware/IsAdmin.php',

@@ -514,6 +514,7 @@ class ComposerStaticInit5f392e735062874993307114c3ddf2f9
         'App\\Http\\Controllers\\Controller' => __DIR__ . '/../..' . '/app/Http/Controllers/Controller.php',
         'App\\Http\\Controllers\\OrderController' => __DIR__ . '/../..' . '/app/Http/Controllers/OrderController.php',
         'App\\Http\\Controllers\\ProductController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProductController.php',
+        'App\\Http\\Controllers\\VariantController' => __DIR__ . '/../..' . '/app/Http/Controllers/VariantController.php',
         'App\\Http\\Middleware\\CacheResponse' => __DIR__ . '/../..' . '/app/Http/Middleware/CacheResponse.php',
         'App\\Http\\Middleware\\EnsureJsonResponse' => __DIR__ . '/../..' . '/app/Http/Middleware/EnsureJsonResponse.php',
         'App\\Http\\Middleware\\IsAdmin' => __DIR__ . '/../..' . '/app/Http/Middleware/IsAdmin.php',
