@@ -8,7 +8,6 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AddressController;
 use App\Http\Controllers\BlogPostController;
-use App\Http\Controllers\Admin\ScraperController;
 
 Route::middleware('throttle:5,1')->group(function () {
     Route::post('/auth/register', [AuthController::class, 'register']);
@@ -56,14 +55,5 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::get('/orders', [OrderController::class, 'adminIndex']);
         Route::put('/orders/{order}', [OrderController::class, 'adminUpdate']);
-
-        // Scraper / Imports
-        Route::get('/imports', [ScraperController::class, 'getRecentImports']);
-        Route::post('/imports/start', [ScraperController::class, 'startImport']);
-        Route::post('/imports/microless/start', [ScraperController::class, 'startMicrolessImport']);
-        Route::post('/imports/json', [ScraperController::class, 'importFromJson']);
-        Route::get('/imports/{id}/status', [ScraperController::class, 'getStatus']);
-        Route::post('/imports/{id}/stop', [ScraperController::class, 'stopImport']);
-        Route::post('/imports/{id}/rerun-failed', [ScraperController::class, 'rerunFailed']);
     });
 });
