@@ -2,8 +2,6 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import type {
   BlogPostStatus,
-  ImportJobStatus,
-  ImportLogStatus,
   OrderStatus,
   PaymentStatus,
   ProductStatus,
@@ -33,23 +31,6 @@ const blogPostStatusStyles: Record<BlogPostStatus, string> = {
   draft: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
 };
 
-const importJobStatusStyles: Record<ImportJobStatus, string> = {
-  pending: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
-  crawling_links: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-  scraping_products: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-  downloading_images: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-  completed: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  failed: "bg-red-500/10 text-red-600 dark:text-red-400",
-};
-
-const importLogStatusStyles: Record<ImportLogStatus, string> = {
-  pending: "bg-slate-500/10 text-slate-600 dark:text-slate-400",
-  scraping: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-  downloading: "bg-sky-500/10 text-sky-600 dark:text-sky-400",
-  success: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400",
-  failed: "bg-red-500/10 text-red-600 dark:text-red-400",
-};
-
 function StatusBadgeBase({ label, className }: { label: string; className: string }) {
   return (
     <Badge variant="outline" className={cn("border-transparent capitalize", className)}>
@@ -72,17 +53,4 @@ export function ProductStatusBadge({ status }: { status: ProductStatus }) {
 
 export function BlogPostStatusBadge({ status }: { status: BlogPostStatus }) {
   return <StatusBadgeBase label={status} className={blogPostStatusStyles[status]} />;
-}
-
-export function ImportJobStatusBadge({ status }: { status: ImportJobStatus }) {
-  return (
-    <StatusBadgeBase
-      label={status.replace(/_/g, " ")}
-      className={importJobStatusStyles[status]}
-    />
-  );
-}
-
-export function ImportLogStatusBadge({ status }: { status: ImportLogStatus }) {
-  return <StatusBadgeBase label={status} className={importLogStatusStyles[status]} />;
 }

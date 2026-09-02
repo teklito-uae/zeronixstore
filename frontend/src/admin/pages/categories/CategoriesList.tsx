@@ -47,7 +47,6 @@ const emptyForm: CategoryFormValues = {
   name: "",
   description: "",
   parent_id: "",
-  microless_category_id: "",
   image: null,
 };
 
@@ -84,7 +83,6 @@ export default function CategoriesList() {
       name: category.name,
       description: category.description ?? "",
       parent_id: category.parent_id ? String(category.parent_id) : "",
-      microless_category_id: category.microless_category_id ?? "",
       image: null,
     });
     setDialogOpen(true);
@@ -177,21 +175,6 @@ export default function CategoriesList() {
                   value={values.description}
                   onChange={(e) => setValues((v) => ({ ...v, description: e.target.value }))}
                 />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label htmlFor="cat-microless-id">Microless category ID</Label>
-                <Input
-                  id="cat-microless-id"
-                  value={values.microless_category_id}
-                  onChange={(e) =>
-                    setValues((v) => ({ ...v, microless_category_id: e.target.value }))
-                  }
-                  placeholder="e.g. 1603"
-                />
-                <p className="text-xs text-muted-foreground">
-                  Optional. When set, the scheduled Microless refresh (daily) pulls new products
-                  into this category automatically.
-                </p>
               </div>
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="cat-image">Image {editing && "(leave empty to keep current)"}</Label>

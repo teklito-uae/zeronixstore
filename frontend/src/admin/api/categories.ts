@@ -9,7 +9,6 @@ export interface CategoryFormValues {
   name: string;
   description: string;
   parent_id: string;
-  microless_category_id: string;
   image?: File | null;
 }
 
@@ -18,7 +17,6 @@ function toFormData(values: CategoryFormValues): FormData {
   fd.append("name", values.name);
   if (values.description) fd.append("description", values.description);
   if (values.parent_id) fd.append("parent_id", values.parent_id);
-  if (values.microless_category_id) fd.append("microless_category_id", values.microless_category_id);
   if (values.image) fd.append("image", values.image);
   return fd;
 }

@@ -24,7 +24,6 @@ export interface Category {
   image_url: string | null;
   total_products_count: number;
   parent_id: number | null;
-  microless_category_id: string | null;
   children?: Category[];
 }
 
@@ -149,40 +148,6 @@ export interface Order {
   shipping_address: ShippingAddress;
   notes: string | null;
   items: OrderItem[];
-  created_at: string;
-}
-
-export type ImportJobStatus =
-  | "pending"
-  | "crawling_links"
-  | "scraping_products"
-  | "downloading_images"
-  | "completed"
-  | "failed";
-
-export interface ImportJob {
-  id: number;
-  source_category_url: string;
-  local_category_id: number | null;
-  local_category?: { id: number; name: string } | null;
-  status: ImportJobStatus;
-  total_found: number;
-  processed_count: number;
-  failed_count: number;
-  error_logs: unknown;
-  created_at: string;
-  updated_at: string;
-}
-
-export type ImportLogStatus = "pending" | "scraping" | "downloading" | "success" | "failed";
-
-export interface ImportLog {
-  id: number;
-  import_job_id: number;
-  product_url: string | null;
-  status: ImportLogStatus;
-  message: string | null;
-  data: Record<string, unknown> | null;
   created_at: string;
 }
 

@@ -4,7 +4,6 @@ import {
   Package,
   ShoppingCart,
   FolderTree,
-  DownloadCloud,
   Newspaper,
   LogOut,
   ChevronsUpDown,
@@ -43,7 +42,6 @@ const navItems = [
   { to: "/admin/orders", label: "Orders", icon: ShoppingCart },
   { to: "/admin/categories", label: "Categories", icon: FolderTree },
   { to: "/admin/blog", label: "Journal", icon: Newspaper },
-  { to: "/admin/imports", label: "Imports", icon: DownloadCloud },
 ];
 
 function initials(name: string): string {
