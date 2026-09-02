@@ -33,36 +33,40 @@ export function MegaMenu() {
   const accent = activeCategory ? getCategoryAccent(activeCategory.slug) : null;
 
   return (
-    <nav aria-label="Product categories" className="hidden lg:block" onMouseLeave={scheduleClose}>
-      <ul className="flex items-center gap-1">
-        {mockCategories.map((cat) => (
-          <li key={cat.id} onMouseEnter={() => scheduleOpen(cat.slug)} onFocus={() => scheduleOpen(cat.slug)}>
-            <Link
-              to={`/category/${cat.slug}`}
-              className={cn(
-                "flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted",
-                openSlug === cat.slug && "bg-muted text-primary",
-              )}
-            >
-              {cat.name}
-              <ChevronDown
+    // No `relative` here on purpose: the dropdown below anchors to Header's full-width
+    // green bar wrapper instead, so it bleeds edge-to-edge rather than just this nav's width.
+    <div className="min-w-0 flex-1" onMouseLeave={scheduleClose}>
+      <nav aria-label="Product categories" className="overflow-x-auto no-scrollbar">
+        <ul className="flex items-center gap-1 whitespace-nowrap">
+          {mockCategories.map((cat) => (
+            <li key={cat.id} onMouseEnter={() => scheduleOpen(cat.slug)} onFocus={() => scheduleOpen(cat.slug)}>
+              <Link
+                to={`/category/${cat.slug}`}
                 className={cn(
-                  "size-3.5 text-muted-foreground transition-transform duration-200",
-                  openSlug === cat.slug && "rotate-180 text-primary",
+                  "flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-nav-foreground transition-colors hover:bg-nav-foreground/15",
+                  openSlug === cat.slug && "bg-nav-foreground text-nav hover:bg-nav-foreground",
                 )}
-              />
+              >
+                {cat.name}
+                <ChevronDown
+                  className={cn(
+                    "size-3.5 text-nav-foreground/70 transition-transform duration-200",
+                    openSlug === cat.slug && "rotate-180 text-nav",
+                  )}
+                />
+              </Link>
+            </li>
+          ))}
+          <li>
+            <Link
+              to="/deals"
+              className="flex items-center rounded-lg px-3 py-2 text-sm font-semibold text-amber-300 transition-colors hover:bg-nav-foreground/15"
+            >
+              Deals
             </Link>
           </li>
-        ))}
-        <li>
-          <Link
-            to="/deals"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
-          >
-            Deals
-          </Link>
-        </li>
-      </ul>
+        </ul>
+      </nav>
 
       <AnimatePresence>
         {activeCategory && (
@@ -74,14 +78,14 @@ export function MegaMenu() {
             transition={{ duration: 0.16, ease: "easeOut" }}
             onMouseEnter={cancelClose}
             onMouseLeave={scheduleClose}
-            className="absolute inset-x-0 top-full border-b border-border bg-popover shadow-lg"
+            className="absolute inset-x-0 top-full z-50 border-b border-border bg-popover shadow-lg"
           >
-            <div className="mx-auto grid max-w-7xl grid-cols-[1fr_auto] gap-10 px-4 py-6">
+            <div className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-4 sm:grid-cols-[1fr_auto] sm:gap-10 sm:py-6">
               <div>
                 <span className="mb-3 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                   Shop {activeCategory.name}
                 </span>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {activeCategory.children?.map((child) => (
                     <Link
                       key={child.id}
@@ -113,7 +117,7 @@ export function MegaMenu() {
                 </div>
               </div>
 
-              <div className="w-56 border-l border-border pl-8">
+              <div className="w-full border-t border-border pt-4 sm:w-56 sm:border-t-0 sm:border-l sm:pl-8 sm:pt-0">
                 <span className="mb-3 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                   Popular Brands
                 </span>
@@ -133,6 +137,6 @@ export function MegaMenu() {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </div>
   );
 }
